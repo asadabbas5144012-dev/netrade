@@ -1,0 +1,28 @@
+{
+  "name": "NETRONTRADE",
+  "short_name": "NETRONTRADE",
+  "description": "NETRONTRADE Premium Digital Asset Platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#d6b56a",
+  "icons": [
+    {
+      "src": "/netrontrade-logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/netrontrade-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/app-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -1,0 +1,304 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                  String              @id @default(cuid())
+  email               String              @unique
+  phone               String?
+  password            String
+  role                String              @default("USER")
+  isVerified          Boolean             @default(false)
+  verificationToken   String?
+  resetToken          String?
+  resetTokenExpiry    DateTime?
+  referralCode        String              @unique
+  referredById        String?
+  referredBy          User?               @relation("Referrals", fields: [referredById], references: [id])
+  referrals           User[]              @relation("Referrals")
+  balance             Float               @default(0)
+  exchangeBalance     Float               @default(0)
+  tradeBalance        Float               @default(0)
+  perpetualBalance    Float               @default(0)
+  lockedBalance       Float               @default(0)
+  profitBalance       Float               @default(0)
+  referralBalance     Float               @default(0)
+  convertedBalance    Float               @default(0)
+  investments         Float               @default(0)
+  otpSecret           String?
+  twoFaEnabled        Boolean             @default(false)
+  boundAddress        String?
+  boundAddressChain   String?
+  withdrawFreezeUntil DateTime?
+  suspended           Boolean             @default(false)
+  suspendedReason     String?
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  kycData             KYC?
+  trades              Trade[]
+  investmentPlans     Investment[]
+  transactions        Transaction[]
+  notifications       Notification[]
+  walletAddresses     WalletAddress[]
+  loginHistory        LoginHistory[]
+  tronWallet          TronWallet?
+  deposits            Deposit[]
+  withdrawals         Withdrawal[]
+  balanceAdjustments  BalanceAdjustment[]
+  chatMessages        ChatMessage[]
+  targetedSignals     Signal[]            @relation("TargetedSignals")
+  signalTargets       SignalTarget[]
+  walletTransferLogs  WalletTransferLog[]
+  investmentLocks     InvestmentLock[]
+}
+
+/// DEPRECATED — legacy per-user (child) HD wallets. No longer created or read:
+/// every account now deposits to the single fixed address in
+/// TRC20_DEPOSIT_ADDRESS (backend/config/depositAddress.js). Kept only so that
+/// `prisma db push --accept-data-loss` does not drop existing production rows.
+model TronWallet {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id])
+  tronAddress     String   @unique
+  derivationIndex Int      @unique
+  createdAt       DateTime @default(now())
+}
+
+model Deposit {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id])
+  txHash          String    @unique
+  fromAddress     String
+  amount          Float
+  currency        String    @default("USDT")
+  status          String    @default("pending_approval")
+  /// DEPRECATED — child → master sweep fields; no longer written. Kept to preserve history.
+  sweepTxHash     String?
+  sweepStatus     String    @default("pending")
+  sweepError      String?
+  rejectionReason String?
+  detectedAt      DateTime  @default(now())
+  approvedAt      DateTime?
+  approvedBy      String?
+}
+
+model Withdrawal {
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation(fields: [userId], references: [id])
+  toAddress         String
+  network           String?   @default("TRC20")
+  amount            Float
+  handlingFeePct    Float?
+  handlingFeeAmount Float?
+  finalAmount       Float?
+  status            String    @default("pending")
+  txHash            String?
+  errorMessage      String?
+  rejectionReason   String?
+  requestedAt       DateTime  @default(now())
+  processedAt       DateTime?
+  processedBy       String?
+}
+
+model BalanceAdjustment {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  adminId   String
+  amount    Float
+  type      String
+  reason    String
+  createdAt DateTime @default(now())
+}
+
+/// DEPRECATED — placeholder per-user addresses that signup used to generate.
+/// No longer created or read; kept only to avoid dropping existing rows.
+model WalletAddress {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  network   String
+  address   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, network])
+}
+
+model LoginHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  ip        String?
+  userAgent String?
+  createdAt DateTime @default(now())
+}
+
+model Investment {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Float
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  message   String
+  type      String   @default("SYSTEM")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Signal {
+  id               String         @id @default(cuid())
+  pair             String
+  direction        String // CALL or PUT
+  marketType       String         @default("FUTURES")
+  entryTime        DateTime
+  duration         Int
+  multiplier       Float          @default(1.8)
+  rewardPercentage Float          @default(80)
+  suggestedAmount  Float?
+  riskLevel        String         @default("MEDIUM")
+  visibilityTier   Int            @default(1)
+  growthTarget     Float?
+  status           String         @default("PENDING")
+  result           String?
+  accessCode       String?
+  targetUserId     String?
+  targetUser       User?          @relation("TargetedSignals", fields: [targetUserId], references: [id])
+  createdAt        DateTime       @default(now())
+  trades           Trade[]
+  targets          SignalTarget[]
+}
+
+// One row per admin "send to selected users" signal, one row per targeted
+// user — lets a signal sent to many users stay a single Signal record
+// (single shared entryTime/countdown) instead of one duplicate Signal row
+// per recipient.
+model SignalTarget {
+  id        String   @id @default(cuid())
+  signalId  String
+  signal    Signal   @relation(fields: [signalId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([signalId, userId])
+}
+
+model Trade {
+  id         String   @id @default(cuid())
+  userId     String
+  signalId   String?
+  user       User     @relation(fields: [userId], references: [id])
+  signal     Signal?  @relation(fields: [signalId], references: [id])
+  amount     Float
+  direction  String
+  pair       String? // Added for manual trades
+  duration   Int? // Added for manual trades
+  outcome    String   @default("PENDING")
+  profit     Float    @default(0)
+  entryPrice Float?
+  closePrice Float?
+  createdAt  DateTime @default(now())
+}
+
+model Transaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String
+  amount    Float
+  status    String   @default("PENDING")
+  address   String?
+  txHash    String?
+  network   String?  @default("TRC20")
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model KYC {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  fullName      String?
+  idNumber      String?
+  selfieUrl     String?
+  addressDocUrl String?
+  idFrontUrl    String?
+  idBackUrl     String?
+  country       String?
+  rejectReason  String?
+  status        String   @default("NONE")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model PlatformSettings {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  content   String?
+  imageUrl  String?
+  sender    String   @default("USER")
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model WalletTransferLog {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id])
+  fromWallet      String
+  toWallet        String
+  amount          Float
+  transferType    String
+  principalAmount Float    @default(0)
+  profitAmount    Float    @default(0)
+  penaltyAmount   Float    @default(0)
+  createdAt       DateTime @default(now())
+}
+
+model InvestmentLock {
+  id                       String    @id @default(cuid())
+  userId                   String    @unique
+  user                     User      @relation(fields: [userId], references: [id])
+  principalLocked          Float     @default(0)
+  lockStartDate            DateTime?
+  lockEndDate              DateTime?
+  penaltyPercentage        Float     @default(0)
+  transferredPrincipal     Float     @default(0)
+  remainingLockedPrincipal Float     @default(0)
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+}
+
+model OtpHistory {
+  id        String   @id @default(cuid())
+  email     String
+  code      String
+  status    String   @default("SENT")
+  createdAt DateTime @default(now())
+}

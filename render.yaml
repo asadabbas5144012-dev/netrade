@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: netrontrade-platform
+    env: node
+    region: singapore
+    plan: free
+    buildCommand: npm install && cd backend && npx prisma generate && npx prisma db push --accept-data-loss && cd ..
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pql-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PORT
+        value: 3000
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASS
+        sync: false
+      - key: ADMIN_URL_PATH
+        sync: false
+      - key: APP_DOMAIN
+        sync: false
+      # SMTP / OTP email (server-only secrets - set in the Render dashboard)
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        sync: false
+      - key: SMTP_SECURE
+        sync: false
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASS
+        sync: false
+      # Single platform-wide TRC20 deposit address (no per-user wallets).
+      - key: TRC20_DEPOSIT_ADDRESS
+        value: TFk6S5zkJKuFAb1QjbHDVr2Lv95oSSCYLN
+
+databases:
+  - name: pql-db
+    databaseName: pql
+    user: pql_admin
+    plan: free
+    region: singapore

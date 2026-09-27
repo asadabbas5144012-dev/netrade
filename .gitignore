@@ -1,0 +1,32 @@
+# Environment secrets (only .env.example is tracked)
+.env
+.env.*
+!.env.example
+
+# Local databases
+prisma/*.db
+prisma/*.db-journal
+*.db
+*.db-journal
+
+node_modules/
+uploads/
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Build output
+dist/
+www/
+public_empty/
+
+# Android signing material - never commit
+*.jks
+*.keystore
+keystore.properties
+
+# The Capacitor project under android/ IS tracked (Capacitor ships its own
+# android/.gitignore for build output and local.properties).
+create_android_project.js
+.gitignore_new

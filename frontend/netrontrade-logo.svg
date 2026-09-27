@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">NETRONTRADE</title>
+  <desc id="desc">Champagne gold N monogram on a black field</desc>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#a97a27"/>
+      <stop offset="0.52" stop-color="#f1d98a"/>
+      <stop offset="1" stop-color="#b8892e"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#050505"/>
+  <circle cx="256" cy="256" r="184" fill="none" stroke="url(#gold)" stroke-width="12"/>
+  <path d="M174 350V162h34l130 126V162h-34v188h-34L208 224v126z" fill="url(#gold)"/>
+  <path d="M256 72l184 184-184 184L72 256z" fill="none" stroke="#d6b56a" stroke-opacity=".22" stroke-width="3"/>
+</svg>
