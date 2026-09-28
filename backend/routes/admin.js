@@ -123,10 +123,6 @@ router.delete('/users/:id', authMiddleware, adminMiddleware, async (req, res) =>
     const userId = req.params.id;
     await prisma.$transaction([
       prisma.loginHistory.deleteMany({ where: { userId } }),
-      // Legacy per-user wallet rows (no longer created) still reference the
-      // user, so they must be cleared before the user row can be deleted.
-      prisma.walletAddress.deleteMany({ where: { userId } }),
-      prisma.tronWallet.deleteMany({ where: { userId } }),
       prisma.deposit.deleteMany({ where: { userId } }),
       prisma.withdrawal.deleteMany({ where: { userId } }),
       prisma.balanceAdjustment.deleteMany({ where: { userId } }),

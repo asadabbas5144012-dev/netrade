@@ -1092,6 +1092,15 @@
                 </button>
             </div>
 
+            <!-- SUBMIT TXID CARD — verified on-chain by POST /api/wallet/deposit/submit -->
+            <div style="margin:0 16px 16px;background:#fff;border-radius:20px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.06);">
+                <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">ALREADY SENT? SUBMIT YOUR TXID</div>
+                <input id="dep-txid" type="text" autocomplete="off" spellcheck="false" placeholder="Transaction hash (TXID)" style="width:100%;box-sizing:border-box;padding:13px 14px;border:1.5px solid rgba(139,92,246,0.25);border-radius:14px;font-size:13px;color:#1a1a2e;background:#f8f5ff;outline:none;">
+                <button id="dep-submit-btn" onclick="submitDepositTxid()" style="width:100%;margin-top:12px;padding:13px;border:none;border-radius:14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(139,92,246,0.35);">
+                    <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Submit Deposit
+                </button>
+            </div>
+
             <!-- NOTICE CARD -->
             <div style="margin:0 16px 24px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:16px;padding:16px;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
@@ -1100,7 +1109,7 @@
                 </div>
                 <ol style="padding-left:16px;margin:0;color:#78350f;font-size:12px;line-height:1.8;list-style-type:decimal;">
                     <li style="margin-bottom:6px;">Only send USDT to this address. Sending other coins may result in permanent loss.</li>
-                    <li style="margin-bottom:6px;">After sending, contact support with your transaction hash (TXID) and amount. Your deposit is credited after verification. Minimum deposit: 1 USDT.</li>
+                    <li style="margin-bottom:6px;">After sending, submit your transaction hash (TXID) above. It is verified on the TRON network and credited after approval. Minimum deposit: 1 USDT.</li>
                     <li style="margin-bottom:6px;">Ensure your browser is secure to prevent information leakage.</li>
                     <li>This is the official platform deposit address. Losses from incorrect transfers are your responsibility.</li>
                 </ol>

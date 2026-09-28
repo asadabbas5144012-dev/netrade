@@ -53,12 +53,15 @@ The app will be available at `http://localhost:3000`.
 ## TRC20 deposit address
 
 Every account deposits to the same platform address, set by
-`TRC20_DEPOSIT_ADDRESS` (default `TFk6S5zkJKuFAb1QjbHDVr2Lv95oSSCYLN`) and
+`TRC20_RECEIVING_ADDRESS` (default `TFk6S5zkJKuFAb1QjbHDVr2Lv95oSSCYLN`) and
 served by `GET /api/wallet/address`. No per-user (parent/child) wallets are
 generated, and the address is read only from the server environment — no user
-or admin API can change it. Because all users share one address, deposits are
-not auto-detected per user: the user contacts support with the TXID and amount,
-and an admin credits the balance manually (Admin panel → balance adjustment).
+or admin API can change it. No private key or seed phrase is needed. Because all
+users share one address, the user submits the TXID of their transfer on the
+deposit screen (`POST /api/wallet/deposit/submit`); the backend verifies on
+TronGrid that it is a confirmed USDT transfer to the receiving address and
+records it as `pending_approval`, and an admin approves it (Admin panel →
+Deposits). Each TXID can only be claimed once.
 
 ## Android app
 

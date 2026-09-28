@@ -5,6 +5,7 @@ const speakeasy = require('speakeasy');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth');
 const { getDepositAddress, DEPOSIT_NETWORK } = require('../config/depositAddress');
+const { verifyUsdtDeposit, isTxHash } = require('../services/trc20Verifier');
 
 // ── TRC20 DEPOSIT ADDRESS + QR CODE ──
 // Same fixed platform address for every account (see config/depositAddress.js).
@@ -14,6 +15,48 @@ router.get('/address', authMiddleware, async (req, res) => {
     const qr = await QRCode.toDataURL(address);
     res.json({ address, network: DEPOSIT_NETWORK, qr_code_base64: qr });
   } catch (error) {
+    res.status(500).json({ error: 'An internal server error occurred.' });
+  }
+});
+
+// ── SUBMIT TRC20 DEPOSIT TXID ──
+// Everyone shares one receiving address, so a deposit is matched to its user
+// by the TXID they submit. The TXID is verified on-chain (confirmed USDT
+// transfer to the receiving address) and recorded as pending_approval for the
+// admin to approve; the unique txHash prevents the same transfer being
+// claimed twice.
+const MIN_DEPOSIT_USDT = 1;
+router.post('/deposit/submit', authMiddleware, async (req, res) => {
+  try {
+    const txHash = String(req.body.txHash || '').trim().toLowerCase();
+    if (!isTxHash(txHash)) return res.status(400).json({ error: 'Please enter a valid 64-character transaction hash (TXID).' });
+
+    const existing = await prisma.deposit.findUnique({ where: { txHash } });
+    if (existing) return res.status(409).json({ error: 'This transaction has already been submitted.' });
+
+    let verified;
+    try {
+      verified = await verifyUsdtDeposit(txHash);
+    } catch (err) {
+      return res.status(400).json({ error: err.message });
+    }
+    if (verified.amount < MIN_DEPOSIT_USDT) {
+      return res.status(400).json({ error: `Minimum deposit is ${MIN_DEPOSIT_USDT} USDT.` });
+    }
+
+    const deposit = await prisma.deposit.create({
+      data: {
+        userId: req.user.userId,
+        txHash: verified.txHash,
+        fromAddress: verified.fromAddress || '',
+        amount: verified.amount,
+        currency: 'USDT',
+        status: 'pending_approval'
+      }
+    });
+    res.json({ success: true, deposit: { id: deposit.id, amount: deposit.amount, status: deposit.status } });
+  } catch (error) {
+    if (error.code === 'P2002') return res.status(409).json({ error: 'This transaction has already been submitted.' });
     res.status(500).json({ error: 'An internal server error occurred.' });
   }
 });

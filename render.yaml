@@ -4,7 +4,10 @@ services:
     env: node
     region: singapore
     plan: free
-    buildCommand: npm install && cd backend && npx prisma generate && npx prisma db push --accept-data-loss && cd ..
+    # generate client -> archive legacy wallet rows -> db push (package.json "build").
+    # Steps are chained with &&, so an unreachable DB or a failed archive stops
+    # the build before any destructive schema change.
+    buildCommand: npm install && npm run build
     startCommand: node server.js
     envVars:
       - key: NODE_ENV
@@ -36,9 +39,12 @@ services:
         sync: false
       - key: SMTP_PASS
         sync: false
-      # Single platform-wide TRC20 deposit address (no per-user wallets).
-      - key: TRC20_DEPOSIT_ADDRESS
+      # Single platform-wide TRC20 receiving address (no parent/child wallets).
+      - key: TRC20_RECEIVING_ADDRESS
         value: TFk6S5zkJKuFAb1QjbHDVr2Lv95oSSCYLN
+      # Optional TronGrid API key for on-chain TXID verification (not a wallet key)
+      - key: TRON_API_KEY
+        sync: false
 
 databases:
   - name: pql-db

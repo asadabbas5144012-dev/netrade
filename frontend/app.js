@@ -1842,7 +1842,7 @@ function updateUIWithUserData() {
 }
 
 // The deposit address is the single fixed platform TRC20 address, served by
-// the backend (TRC20_DEPOSIT_ADDRESS) — not hardcoded here.
+// the backend (TRC20_RECEIVING_ADDRESS) — not hardcoded here.
 async function loadDepositInfo() {
     if (!authToken) return;
     try {
@@ -1857,6 +1857,32 @@ async function loadDepositInfo() {
             qrBox.innerHTML = '<img src="' + data.qr_code_base64 + '" style="width:160px;height:160px;border-radius:8px;" />';
         }
     } catch (err) { }
+}
+
+// Everyone deposits to the same address, so the user submits the TXID of
+// their transfer; the backend verifies it on-chain and queues it for approval.
+async function submitDepositTxid() {
+    if (!authToken) return showToast('Please login first');
+    const input = document.getElementById('dep-txid');
+    const btn = document.getElementById('dep-submit-btn');
+    const txHash = (input && input.value || '').trim();
+    if (!/^[0-9a-fA-F]{64}$/.test(txHash)) return showToast('Please enter a valid 64-character TXID');
+    if (btn) btn.disabled = true;
+    try {
+        const res = await fetch('/api/wallet/deposit/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+            body: JSON.stringify({ txHash })
+        });
+        const data = await res.json().catch(function () { return {}; });
+        if (!res.ok) return showToast(data.error || 'Deposit submission failed', 4000);
+        if (input) input.value = '';
+        showToast('Deposit of ' + data.deposit.amount + ' USDT submitted — pending approval', 4000);
+    } catch (err) {
+        showToast('Network error, please try again');
+    } finally {
+        if (btn) btn.disabled = false;
+    }
 }
 
 async function loadTransactions() {
