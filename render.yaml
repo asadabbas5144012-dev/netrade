@@ -28,16 +28,20 @@ services:
         sync: false
       - key: APP_DOMAIN
         sync: false
-      # SMTP / OTP email (server-only secrets - set in the Render dashboard)
+      # SMTP / registration OTP email (server-only - set in the Render dashboard).
+      # Free plan blocks 25/465/587: use port 2525 with SMTP_SECURE=false (STARTTLS).
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT
-        sync: false
+        value: "2525"
       - key: SMTP_SECURE
-        sync: false
+        value: "false"
       - key: SMTP_USER
         sync: false
       - key: SMTP_PASS
+        sync: false
+      # Verified sender, e.g. NETRONTRADE <no-reply@mydomain.com>
+      - key: SMTP_FROM
         sync: false
       # Single platform-wide TRC20 receiving address (no parent/child wallets).
       - key: TRC20_RECEIVING_ADDRESS

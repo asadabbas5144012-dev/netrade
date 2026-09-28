@@ -41,7 +41,8 @@ router.post('/send-otp', async (req, res) => {
     if (emailResult.success) {
       res.json({ message: 'OTP sent to your email successfully' });
     } else {
-      res.status(500).json({ error: 'Email Error: ' + emailResult.error });
+      // The SMTP reason is logged by the mailer; users get a generic message.
+      res.status(500).json({ error: 'Could not send the verification email. Please try again later or contact support.' });
     }
   } catch (error) {
     res.status(500).json({ error: 'An internal server error occurred.' });
