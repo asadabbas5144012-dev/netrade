@@ -2292,7 +2292,7 @@ body {
 /* â”€â”€ TOAST â”€â”€ */
 .toast {
     position: fixed;
-    bottom: calc(var(--nav-height)+20px);
+    bottom: calc(var(--nav-height) + 20px);
     left: 50%;
     transform: translateX(-50%);
     background: #1e2d3e;
