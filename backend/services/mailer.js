@@ -15,6 +15,11 @@ const nodemailer = require('nodemailer');
 //   SMTP_FROM    Sender shown to users, e.g. "NETRONTRADE <no-reply@mydomain.com>".
 //                Must be a sender/domain verified with the provider. It is kept
 //                separate from SMTP_USER on purpose.
+//
+// HTTPS alternative (recommended on Render): if BREVO_API_KEY is set, emails
+// go through Brevo's HTTP API on port 443, which Render never blocks, and the
+// SMTP_* variables above are ignored except SMTP_FROM (the verified sender).
+//   BREVO_API_KEY  Brevo -> SMTP & API -> API Keys (starts with "xkeysib-")
 
 const REQUIRED_VARS = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'SMTP_FROM'];
 
@@ -43,8 +48,30 @@ function readConfig() {
 }
 
 const config = readConfig();
+const brevoKey = env('BREVO_API_KEY');
 
-if (config.missing.length) {
+// "NETRONTRADE <no-reply@x.com>" -> { name, email }
+function parseFrom(from) {
+  const m = from.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
+  return m ? { name: m[1].replace(/^"|"$/g, '') || undefined, email: m[2].trim() } : { email: from };
+}
+
+async function brevoRequest(path, body) {
+  const res = await fetch(`https://api.brevo.com/v3${path}`, {
+    method: body ? 'POST' : 'GET',
+    headers: { 'api-key': brevoKey, 'content-type': 'application/json', accept: 'application/json' },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(15000)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(data.message || `HTTP ${res.status}`), { code: data.code || `HTTP_${res.status}` });
+  return data;
+}
+
+if (brevoKey) {
+  if (config.from) console.log(`[Mailer] Using Brevo HTTP API, from ${config.from}`);
+  else console.error('[Mailer] BREVO_API_KEY is set but SMTP_FROM (verified sender) is missing. OTP emails will fail.');
+} else if (config.missing.length) {
   console.error(`[Mailer] SMTP is not configured — missing ${config.missing.join(', ')}. OTP emails will fail until these are set in the environment.`);
 } else {
   console.log(`[Mailer] SMTP configured: ${config.host}:${config.port} (${config.secure ? 'implicit TLS' : 'STARTTLS required'}), from ${config.from}`);
@@ -73,6 +100,17 @@ function describeError(error) {
 }
 
 async function sendMail({ to, subject, html, text }) {
+  if (brevoKey) {
+    if (!config.from) return { success: false, error: 'SMTP_FROM (verified sender) is not set' };
+    try {
+      const data = await brevoRequest('/smtp/email', { sender: parseFrom(config.from), to: [{ email: to }], subject, htmlContent: html, textContent: text });
+      console.log(`[Mailer] Sent "${subject}" to ${to} via Brevo (${data.messageId})`);
+      return { success: true };
+    } catch (error) {
+      console.error(`[Mailer] Brevo failed to send "${subject}" to ${to}: ${describeError(error)}`);
+      return { success: false, error: describeError(error) };
+    }
+  }
   if (!transporter) {
     const error = `SMTP is not configured (missing ${config.missing.join(', ')})`;
     console.error(`[Mailer] Not sending "${subject}" to ${to}: ${error}`);
@@ -119,16 +157,24 @@ async function sendOtpEmail(toEmail, otpCode) {
 // imports it). Verifies connect + STARTTLS/TLS + login, and if a recipient is
 // given also sends a real test email through the same path as OTP emails.
 async function testSmtp(toEmail) {
-  if (!transporter) {
+  if (brevoKey) {
+    try {
+      await brevoRequest('/account');
+    } catch (error) {
+      return { success: false, error: `Brevo API key rejected — ${describeError(error)}` };
+    }
+  } else if (!transporter) {
     return { success: false, error: `SMTP is not configured. Set ${config.missing.join(', ')} in the Render environment variables.` };
   }
-  try {
-    await transporter.verify();
-  } catch (error) {
-    return { success: false, error: `Connection/login to ${config.host}:${config.port} failed — ${describeError(error)}` };
+  if (!brevoKey) {
+    try {
+      await transporter.verify();
+    } catch (error) {
+      return { success: false, error: `Connection/login to ${config.host}:${config.port} failed — ${describeError(error)}` };
+    }
   }
   if (!toEmail) {
-    return { success: true, message: `Connected and authenticated to ${config.host}:${config.port}.` };
+    return { success: true, message: brevoKey ? 'Brevo API key is valid.' : `Connected and authenticated to ${config.host}:${config.port}.` };
   }
   const result = await sendMail({
     to: toEmail,
