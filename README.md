@@ -1,4 +1,4 @@
-# NETRONTRADE
+# NEOTRADE
 
 A professional-grade, lightweight signal-based simulated exchange, with TRON
 (TRC20 USDT) deposits/withdrawals and a native Android app.

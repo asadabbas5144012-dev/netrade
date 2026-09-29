@@ -1,4 +1,4 @@
-const CACHE_NAME = 'netrontrade-v1';
+const CACHE_NAME = 'neotrade-v2';
 const urlsToCache = [
   '/',
   '/index.html',

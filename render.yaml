@@ -12,10 +12,11 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      # Neon Postgres connection string (Neon dashboard -> Connect). Use the
+      # DIRECT (non "-pooler") URL, ending in ?sslmode=require, so
+      # "prisma db push" in the build works.
       - key: DATABASE_URL
-        fromDatabase:
-          name: pql-db
-          property: connectionString
+        sync: false
       - key: JWT_SECRET
         generateValue: true
       - key: PORT
@@ -28,20 +29,24 @@ services:
         sync: false
       - key: APP_DOMAIN
         sync: false
-      # SMTP / registration OTP email (server-only - set in the Render dashboard).
-      # Free plan blocks 25/465/587: use port 2525 with SMTP_SECURE=false (STARTTLS).
+      # OTP / password-reset email (server-only - set in the Render dashboard).
+      # Recommended on Render: Brevo HTTP API (port 443, never blocked).
+      # Verify netradeofficiall@gmail.com as a sender in Brevo first.
+      - key: BREVO_API_KEY
+        sync: false
+      - key: SMTP_FROM
+        value: "NEOTRADE <netradeofficiall@gmail.com>"
+      # Only used when BREVO_API_KEY is NOT set (plain SMTP). Render's free plan
+      # blocks ports 25/465/587, so Gmail SMTP only works on a paid instance.
       - key: SMTP_HOST
         sync: false
       - key: SMTP_PORT
-        value: "2525"
+        sync: false
       - key: SMTP_SECURE
-        value: "false"
+        sync: false
       - key: SMTP_USER
         sync: false
       - key: SMTP_PASS
-        sync: false
-      # Verified sender, e.g. NETRONTRADE <no-reply@mydomain.com>
-      - key: SMTP_FROM
         sync: false
       # Single platform-wide TRC20 receiving address (no parent/child wallets).
       - key: TRC20_RECEIVING_ADDRESS
@@ -50,9 +55,3 @@ services:
       - key: TRON_API_KEY
         sync: false
 
-databases:
-  - name: pql-db
-    databaseName: pql
-    user: pql_admin
-    plan: free
-    region: singapore

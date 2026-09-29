@@ -1,7 +1,7 @@
 {
-  "name": "NETRONTRADE",
-  "short_name": "NETRONTRADE",
-  "description": "NETRONTRADE Premium Digital Asset Platform",
+  "name": "NEOTRADE",
+  "short_name": "NEOTRADE",
+  "description": "NEOTRADE Premium Digital Asset Platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#050505",

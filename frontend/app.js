@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════
-    NETRONTRADE — Full App Logic
+    NEOTRADE — Full App Logic
 ═══════════════════════════════════════ */
 
 // ── CUID → 8-digit numeric ID (deterministic, unique per user) ──
@@ -247,7 +247,9 @@ function toggleSecurityMenu(el) {
 }
 
 // ── THEME TOGGLE ──
-let isDark = localStorage.getItem('theme') !== 'light';
+// The app ships a single dark theme; any stored light preference is ignored.
+let isDark = true;
+try { localStorage.removeItem('theme'); } catch (e) { }
 
 function _applyTheme() {
     document.documentElement.classList.remove('light-preload');
@@ -265,8 +267,7 @@ function _applyTheme() {
 }
 
 function toggleTheme() {
-    isDark = !isDark;
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    isDark = true;
     _applyTheme();
 }
 
@@ -369,11 +370,11 @@ function renderHomeMarkets(tab = 'change') {
             <div style="flex:1.5; display:flex; align-items:center; gap:10px;">
                 ${coinIconHtml(c.sym, c.bg, 36)}
                 <div style="display:flex;flex-direction:column;gap:2px;">
-                    <span style="font-weight:700; color:#1a1a2e; font-size:14px; line-height:1;">${c.sym}</span>
+                    <span style="font-weight:700; color:#f5f1e8; font-size:14px; line-height:1;">${c.sym}</span>
                     <span style="color:#9ca3af; font-size:11px; line-height:1;">/ USDT</span>
                 </div>
             </div>
-            <div style="flex:1; text-align:right; color:#1a1a2e; font-size:14px; font-weight:600; letter-spacing:-0.2px;">
+            <div style="flex:1; text-align:right; color:#f5f1e8; font-size:14px; font-weight:600; letter-spacing:-0.2px;">
                 <div id="hm-price-${c.sym}">${c.price}</div>
             </div>
             <div style="flex:1; display:flex; justify-content:flex-end;">
@@ -581,16 +582,16 @@ function renderMarkets(filter) {
         const fmtPrice = rawPrice < 0.1 ? rawPrice.toFixed(5) : (rawPrice < 100 ? rawPrice.toFixed(3) : rawPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
         const fakeVol = rawPrice > 1000 ? (Math.random() * 400 + 50).toFixed(2) + 'M' : (Math.random() * 30 + 1).toFixed(2) + 'M';
         return `
-        <div class="market-item" onclick="openTradingPair('${c.sym}')" style="cursor:pointer; display:flex; align-items:center; padding:13px 16px; border-bottom:1px solid #f5f5ff; background:#fff;">
+        <div class="market-item" onclick="openTradingPair('${c.sym}')" style="cursor:pointer; display:flex; align-items:center; padding:13px 16px; border-bottom:1px solid rgba(214,181,106,0.14); background:#11100e;">
             <div style="flex:1.4; display:flex; align-items:center; gap:10px;">
                 ${coinIconHtml(c.sym, c.bg, 36)}
                 <div>
-                    <div style="font-size:14px; font-weight:700; color:#1a1a2e;">${c.sym}<span style="font-weight:500; color:#9ca3af; font-size:12px;"> / USDT</span></div>
+                    <div style="font-size:14px; font-weight:700; color:#f5f1e8;">${c.sym}<span style="font-weight:500; color:#9ca3af; font-size:12px;"> / USDT</span></div>
                     <div style="font-size:11px; color:#9ca3af; margin-top:2px;">VOL: ${fakeVol}</div>
                 </div>
             </div>
             <div style="flex:1; text-align:right; padding-right:10px;">
-                <div style="font-size:14px; font-weight:700; color:#1a1a2e;">$ ${fmtPrice}</div>
+                <div style="font-size:14px; font-weight:700; color:#f5f1e8;">$ ${fmtPrice}</div>
             </div>
             <div style="flex:0.8; text-align:right;">
                 <span style="display:inline-block; padding:6px 10px; border-radius:8px; font-size:12px; font-weight:700; color:#fff; background:${c.up ? '#02c076' : '#f84960'};">${c.ch}</span>
@@ -1067,9 +1068,7 @@ function setLoginTab(btn, tab) {
     document.querySelectorAll('.login-type-tabs button').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const emailGroup = document.getElementById('login-email-group');
-    const mobileGroup = document.getElementById('login-mobile-group');
-    if (emailGroup) emailGroup.style.display = tab === 'email' ? 'block' : 'none';
-    if (mobileGroup) mobileGroup.style.display = tab === 'mobile' ? 'block' : 'none';
+    if (emailGroup) emailGroup.style.display = 'block';
 }
 
 function setRegTab(btn, tab) {
@@ -1134,11 +1133,11 @@ async function showCaptchaModal() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
         });
+        const txt = await res.text();
         let data;
         try {
-            data = await res.json();
+            data = JSON.parse(txt);
         } catch (err) {
-            const txt = await res.text();
             showToast('Server Error: ' + (txt.slice(0, 100) || res.statusText));
             btn.disabled = false;
             return;
@@ -1287,7 +1286,7 @@ function initChart(symbol, interval) {
     apexChartData = []; apexChartRaw = [];
     chartState.sym = symbol.replace(/\//g, '').replace('USDTUSDT', 'USDT').replace(/\s+/g, '').toUpperCase();
     chartState.tf = interval;
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:340px;color:#4a5568;font-size:13px;">Loading...</div>';
+    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:340px;color:#a9a49a;font-size:13px;">Loading...</div>';
 
     const sym = chartState.sym;
     let bSym = sym;
@@ -1355,7 +1354,7 @@ function initPerpChart(symbol, interval) {
     apexPerpData = []; apexPerpRaw = [];
     perpState.sym = symbol.replace(/\//g, '').toUpperCase();
     perpState.tf = interval;
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:290px;color:#4a5568;font-size:13px;">Loading...</div>';
+    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:290px;color:#a9a49a;font-size:13px;">Loading...</div>';
 
     const sym = perpState.sym;
     let bSym = sym;
@@ -1574,7 +1573,7 @@ function updateMarketUI(prices) {
             // Leave the sparkline arrays alone so the charts stay exactly as their initial wavy shapes.
             const hmPrice = document.getElementById('hm-price-' + sym);
             const hmChg = document.getElementById('hm-chg-' + sym);
-            if (hmPrice) { hmPrice.textContent = coin.price; hmPrice.style.color = '#1a1a2e'; }
+            if (hmPrice) { hmPrice.textContent = coin.price; hmPrice.style.color = '#f5f1e8'; }
             if (hmChg) {
                 hmChg.textContent = coin.ch;
                 hmChg.style.background = up ? '#02c076' : '#f84960';
@@ -1684,9 +1683,7 @@ function updateUIWithUserData() {
     const emailEl = document.getElementById('sidebar-email');
     const idEl = document.getElementById('sidebar-uid');
     if (emailEl) {
-        const email = userData.email || '';
-        const savedPhone = localStorage.getItem('phone_' + email);
-        const display = savedPhone || email;
+        const display = userData.email || '';
         emailEl.textContent = display.length > 24 ? display.substring(0, 22) + '...' : display;
     }
     if (idEl && userData.id) {
@@ -1694,12 +1691,9 @@ function updateUIWithUserData() {
         const numId = toNumericId(userData.id);
         idEl.innerHTML = `ID: ${numId} <i class="fa-regular fa-copy" onclick="copyText('${numId}')" style="cursor:pointer;"></i>`;
     }
-    // Personal Center profile card — show phone if saved, else email
+    // Personal Center profile card — show the account email
     const pcEmail = document.getElementById('pc-email');
-    if (pcEmail) {
-        const savedPhone = localStorage.getItem('phone_' + (userData.email || ''));
-        pcEmail.textContent = savedPhone || userData.email || 'Not logged in';
-    }
+    if (pcEmail) pcEmail.textContent = userData.email || 'Not logged in';
     const pcUid = document.getElementById('pc-uid');
     const pcUidVal = document.getElementById('pc-uid-val');
     if (pcUid && userData.id) {
@@ -1733,7 +1727,7 @@ function updateUIWithUserData() {
         const vipIcons = ['🥉','🥈','🥇','💎','👑'];
         pcVipBadge.textContent = `${vipIcons[vipLevel]} VIP${vipLevel}`;
     }
-    // Avatar always shows the NETRONTRADE mark
+    // Avatar always shows the NEOTRADE mark
     const pcAvatar = document.getElementById('pc-avatar');
     if (pcAvatar && !pcAvatar.querySelector('img')) {
         pcAvatar.innerHTML = `<img src="/netrontrade-logo.svg" style="width:100%;height:100%;object-fit:cover;border-radius:20px;">`;
@@ -1793,7 +1787,7 @@ function updateUIWithUserData() {
         htmlContent = refs.map(r => {
             const commission = ((r.investments || 0) * 0.05).toFixed(2);
             return `
-                <div class="ref-item" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f0f0f0;">
+                <div class="ref-item" style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(214,181,106,0.14);">
                     <div>
                         <div class="ref-user" style="font-weight:600;font-size:14px;color:var(--text-primary);">${r.email}</div>
                         <div class="ref-date" style="font-size:12px;color:var(--text-secondary);">${new Date(r.createdAt).toLocaleDateString()}</div>
@@ -2144,36 +2138,13 @@ async function refreshUserData() {
         userData = data;
         localStorage.setItem('user', JSON.stringify(userData));
         updateUIWithUserData();
-        syncLocalPhoneIfNeeded();
     } catch (err) {
         console.error('Refresh error:', err);
     }
 }
 
-// Backfills the phone number for accounts created before phone was wired
-// up to the backend — it was only ever saved to localStorage on the
-// registering device, so this recovers it the next time that device opens the app.
-function syncLocalPhoneIfNeeded() {
-    if (!userData || userData.phone || !userData.email) return;
-    const savedPhone = localStorage.getItem('phone_' + userData.email);
-    if (!savedPhone) return;
-    fetch('/api/user/sync-phone', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-        body: JSON.stringify({ phone: savedPhone })
-    }).then(function(res) { return res.json(); }).then(function(data) {
-        if (data.phone) userData.phone = data.phone;
-    }).catch(function() {});
-}
-
 async function doLogin() {
-    const emailGroup = document.getElementById('login-email-group');
-    let identifier = '';
-    if (emailGroup && emailGroup.style.display !== 'none') {
-        identifier = document.getElementById('login-email').value;
-    } else {
-        identifier = document.getElementById('login-mobile').value;
-    }
+    const identifier = document.getElementById('login-email').value.trim();
 
     const pass = document.getElementById('login-pass').value;
     if (!identifier || !pass) { showToast('Please enter credentials'); return; }
@@ -2220,26 +2191,21 @@ async function doLogin() {
 
 async function doRegister() {
     const email = document.getElementById('reg-email')?.value?.trim();
-    const dialCode = document.getElementById('reg-dial-code')?.textContent || '+92';
-    const phone = document.getElementById('reg-phone')?.value?.trim();
     const code = document.getElementById('reg-code')?.value?.trim();
     const pass = document.getElementById('reg-pass')?.value;
     const confirm = document.getElementById('reg-confirm')?.value;
     const ref = document.getElementById('reg-invite')?.value?.trim();
     if (!email || !pass || !confirm) { showToast('Please fill all fields'); return; }
-    if (!phone) { showToast('Please enter your mobile number'); return; }
     if (!code) { showToast('Please enter the verification code'); return; }
     if (pass !== confirm) { showToast('Passwords do not match'); return; }
     try {
         const res = await fetch('/api/auth/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password: pass, referralCode: ref, otp: code, phone: dialCode + phone })
+            body: JSON.stringify({ email, password: pass, referralCode: ref, otp: code })
         });
         const data = await res.json();
         if (data.error) { showToast(data.error); return; }
-        // Save phone linked to this email in localStorage
-        localStorage.setItem('phone_' + email, dialCode + phone);
         authToken = data.token;
         userData = data.user;
         localStorage.setItem('token', authToken);
@@ -2250,58 +2216,6 @@ async function doRegister() {
         fetchSignals();
         navTo('home-screen');
     } catch (err) { showToast('Server error'); }
-}
-
-// ── COUNTRY CODE PICKER FOR REGISTRATION ──
-const dialCountries = [
-    { name:'Pakistan',       flag:'🇵🇰', dial:'+92'  },
-    { name:'United States',  flag:'🇺🇸', dial:'+1'   },
-    { name:'United Kingdom', flag:'🇬🇧', dial:'+44'  },
-    { name:'India',          flag:'🇮🇳', dial:'+91'  },
-    { name:'UAE',            flag:'🇦🇪', dial:'+971' },
-    { name:'Saudi Arabia',   flag:'🇸🇦', dial:'+966' },
-    { name:'Canada',         flag:'🇨🇦', dial:'+1'   },
-    { name:'Australia',      flag:'🇦🇺', dial:'+61'  },
-    { name:'Germany',        flag:'🇩🇪', dial:'+49'  },
-    { name:'France',         flag:'🇫🇷', dial:'+33'  },
-    { name:'Turkey',         flag:'🇹🇷', dial:'+90'  },
-    { name:'Bangladesh',     flag:'🇧🇩', dial:'+880' },
-    { name:'Nigeria',        flag:'🇳🇬', dial:'+234' },
-    { name:'Egypt',          flag:'🇪🇬', dial:'+20'  },
-    { name:'Indonesia',      flag:'🇮🇩', dial:'+62'  },
-    { name:'Malaysia',       flag:'🇲🇾', dial:'+60'  },
-    { name:'Singapore',      flag:'🇸🇬', dial:'+65'  },
-    { name:'Hong Kong',      flag:'🇭🇰', dial:'+852' },
-    { name:'South Korea',    flag:'🇰🇷', dial:'+82'  },
-    { name:'Japan',          flag:'🇯🇵', dial:'+81'  },
-    { name:'China',          flag:'🇨🇳', dial:'+86'  },
-    { name:'Russia',         flag:'🇷🇺', dial:'+7'   },
-    { name:'Brazil',         flag:'🇧🇷', dial:'+55'  },
-    { name:'South Africa',   flag:'🇿🇦', dial:'+27'  },
-];
-function openRegCountryPicker() {
-    const modal = document.getElementById('reg-country-modal');
-    const list  = document.getElementById('reg-country-list');
-    if (!modal || !list) return;
-    list.innerHTML = dialCountries.map(c => `
-        <div onclick="selectRegCountry('${c.flag}','${c.dial}')"
-             style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;">
-            <span style="font-size:22px;">${c.flag}</span>
-            <span style="flex:1;font-size:14px;font-weight:500;color:#fff;">${c.name}</span>
-            <span style="font-size:13px;color:#8b5cf6;font-weight:700;">${c.dial}</span>
-        </div>`).join('');
-    modal.style.display = 'block';
-}
-function closeRegCountryPicker() {
-    const modal = document.getElementById('reg-country-modal');
-    if (modal) modal.style.display = 'none';
-}
-function selectRegCountry(flag, dial) {
-    const flagEl = document.getElementById('reg-flag');
-    const dialEl = document.getElementById('reg-dial-code');
-    if (flagEl) flagEl.textContent = flag;
-    if (dialEl) dialEl.textContent = dial;
-    closeRegCountryPicker();
 }
 
 async function doForgotPassword() {
@@ -2315,12 +2229,11 @@ async function doForgotPassword() {
         });
         const data = await res.json();
         if (data.error) { showToast(data.error); return; }
-        const token = data.resetToken || '';
-        document.getElementById('forgot-token-display').textContent = token;
-        document.getElementById('reset-token-input').value = token;
+        document.getElementById('forgot-token-display').textContent = email;
+        document.getElementById('reset-token-input').value = '';
         document.getElementById('forgot-step1').style.display = 'none';
         document.getElementById('forgot-step2').style.display = 'block';
-        showToast('Reset token generated!');
+        showToast('Reset code sent to your email');
     } catch (err) { showToast('Server error. Try again.'); }
 }
 
@@ -2413,14 +2326,14 @@ function showConfirmSetup2fa() {
         modal.id = 'setup-2fa-popup';
         modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:24px;';
         modal.innerHTML = `
-        <div style="background:#fff;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+        <div style="background:#11100e;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
                 <i class="fa-solid fa-shield-halved" style="color:#fff;font-size:20px;"></i>
             </div>
-            <div style="font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:10px;">Set Up Google Authenticator</div>
+            <div style="font-size:15px;font-weight:700;color:#f5f1e8;margin-bottom:10px;">Set Up Google Authenticator</div>
             <div style="font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:20px;">For your security, withdrawals require Google Authenticator. Set it up first, then try again.</div>
             <button onclick="closeConfirmSetup2fa(); navTo('google-auth-screen');" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;margin-bottom:10px;">Set Up Now</button>
-            <button onclick="closeConfirmSetup2fa()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#f3f4f6;color:#6b7280;">Cancel</button>
+            <button onclick="closeConfirmSetup2fa()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#1a1814;color:#6b7280;">Cancel</button>
         </div>`;
         document.body.appendChild(modal);
     }
@@ -2438,14 +2351,14 @@ function show2faCodePrompt(onSubmit) {
         modal.id = '2fa-code-popup';
         modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:24px;';
         modal.innerHTML = `
-        <div style="background:#fff;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+        <div style="background:#11100e;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
                 <i class="fa-solid fa-shield-halved" style="color:#fff;font-size:20px;"></i>
             </div>
-            <div style="font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:14px;">Enter Authenticator Code</div>
+            <div style="font-size:15px;font-weight:700;color:#f5f1e8;margin-bottom:14px;">Enter Authenticator Code</div>
             <input type="text" id="2fa-code-input" inputmode="numeric" maxlength="6" placeholder="000000" style="width:100%;padding:13px;border:1.5px solid rgba(139,92,246,0.25);border-radius:12px;font-size:20px;font-weight:700;text-align:center;letter-spacing:6px;margin-bottom:16px;outline:none;">
             <button id="2fa-code-submit-btn" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;margin-bottom:10px;">Confirm</button>
-            <button onclick="close2faCodePrompt()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#f3f4f6;color:#6b7280;">Cancel</button>
+            <button onclick="close2faCodePrompt()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#1a1814;color:#6b7280;">Cancel</button>
         </div>`;
         document.body.appendChild(modal);
     }
@@ -3318,7 +3231,7 @@ async function onAccessCodeInput(code) {
     clearTimeout(_codeTimer);
     _codeTimer = setTimeout(async () => {
         if (!authToken) { showToast('Please login first'); return; }
-        if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#8b5cf6'; statusEl.textContent = '⏳ Verifying code...'; }
+        if (statusEl) { statusEl.style.display = 'block'; statusEl.style.color = '#d6b56a'; statusEl.textContent = '⏳ Verifying code...'; }
         const pairSym = (window._currentPerpPair || 'BTC/USDT');
         const btn = document.getElementById('perp-buy-btn');
         const side = btn?.textContent?.includes('Short') ? 'PUT' : 'CALL';
@@ -3454,10 +3367,10 @@ function renderPerpPositions(trades) {
         const totalSec = t.signal?.duration || 60;
 
         return `
-        <div style="background:#fff;border-radius:14px;padding:14px 16px;margin:10px 12px;box-shadow:0 2px 12px rgba(0,0,0,0.07);border:1px solid #f0f0f8;">
+        <div style="background:#11100e;border-radius:14px;padding:14px 16px;margin:10px 12px;box-shadow:0 2px 12px rgba(0,0,0,0.35);border:1px solid rgba(214,181,106,0.14);">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
                 <div style="display:flex;align-items:center;gap:8px;">
-                    <span style="font-size:15px;font-weight:800;color:#1a1a2e;">${pair}</span>
+                    <span style="font-size:15px;font-weight:800;color:#f5f1e8;">${pair}</span>
                     <span style="font-size:11px;font-weight:700;color:#fff;background:${dirColor};padding:3px 10px;border-radius:6px;">${dirLabel}</span>
                 </div>
                 <div style="text-align:right;">
@@ -3466,26 +3379,26 @@ function renderPerpPositions(trades) {
                 </div>
             </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;margin-bottom:10px;">
-                <div style="background:#f8f8ff;border-radius:8px;padding:7px;text-align:center;">
+                <div style="background:#1a1814;border-radius:8px;padding:7px;text-align:center;">
                     <div style="font-size:8px;color:#9ca3af;margin-bottom:2px;">AMOUNT</div>
-                    <div style="font-size:12px;font-weight:800;color:#1a1a2e;">${amount}</div>
+                    <div style="font-size:12px;font-weight:800;color:#f5f1e8;">${amount}</div>
                     <div style="font-size:8px;color:#9ca3af;">USDT</div>
                 </div>
-                <div style="background:#f8f8ff;border-radius:8px;padding:7px;text-align:center;">
+                <div style="background:#1a1814;border-radius:8px;padding:7px;text-align:center;">
                     <div style="font-size:8px;color:#9ca3af;margin-bottom:2px;">ENTRY</div>
-                    <div style="font-size:12px;font-weight:800;color:#1a1a2e;">${entryPrice}</div>
+                    <div style="font-size:12px;font-weight:800;color:#f5f1e8;">${entryPrice}</div>
                 </div>
                 <div style="background:rgba(2,192,118,0.08);border-radius:8px;padding:7px;text-align:center;">
                     <div style="font-size:8px;color:#9ca3af;margin-bottom:2px;">PROFIT</div>
                     <div style="font-size:12px;font-weight:800;color:#02c076;">+${reward}%</div>
                 </div>
-                <div style="background:#f8f8ff;border-radius:8px;padding:7px;text-align:center;">
+                <div style="background:#1a1814;border-radius:8px;padding:7px;text-align:center;">
                     <div style="font-size:8px;color:#9ca3af;margin-bottom:2px;">DURATION</div>
-                    <div style="font-size:12px;font-weight:800;color:#1a1a2e;">${Math.floor(totalSec/60)} min</div>
+                    <div style="font-size:12px;font-weight:800;color:#f5f1e8;">${Math.floor(totalSec/60)} min</div>
                 </div>
             </div>
             <!-- Progress bar -->
-            <div style="height:5px;background:#f0f0f8;border-radius:4px;overflow:hidden;">
+            <div style="height:5px;background:#1a1814;border-radius:4px;overflow:hidden;">
                 <div id="pb-${t.id}" style="height:100%;background:linear-gradient(90deg,${dirColor},${dirColor}88);border-radius:4px;width:0%;transition:width 1s linear;"></div>
             </div>
         </div>`;
@@ -3542,10 +3455,10 @@ function renderPerpHistory(trades) {
         const amount = parseFloat(t.amount || 0).toFixed(2);
         const createdAt = t.createdAt ? new Date(t.createdAt).toLocaleString() : '--';
         return `
-        <div onclick="showTradeDetails(${idx})" style="cursor:pointer;background:#fff;border-radius:12px;padding:14px 16px;margin:8px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.05);border-left:3px solid ${outcomeColor};">
+        <div onclick="showTradeDetails(${idx})" style="cursor:pointer;background:#11100e;border-radius:12px;padding:14px 16px;margin:8px 12px;box-shadow:0 2px 8px rgba(0,0,0,0.35);border-left:3px solid ${outcomeColor};">
             <div style="display:flex;justify-content:space-between;align-items:center;">
                 <div>
-                    <div style="font-size:13px;font-weight:800;color:#1a1a2e;">${pair} <span style="font-size:10px;color:${isCall?'#02c076':'#f84960'};font-weight:700;">${dir}</span></div>
+                    <div style="font-size:13px;font-weight:800;color:#f5f1e8;">${pair} <span style="font-size:10px;color:${isCall?'#02c076':'#f84960'};font-weight:700;">${dir}</span></div>
                     <div style="font-size:10px;color:#9ca3af;margin-top:2px;">${createdAt}</div>
                 </div>
                 <div style="text-align:right;">
@@ -3749,7 +3662,7 @@ function initPerpDetailChart(symbol, interval) {
     if (_perpDetailChart) { try { _perpDetailChart.destroy(); } catch (e) { } _perpDetailChart = null; }
     _perpDetailData = []; _perpDetailRaw = [];
     _perpDetailState.sym = symbol; _perpDetailState.tf = interval;
-    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:290px;color:#4a5568;font-size:13px;">Loading...</div>';
+    container.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:290px;color:#a9a49a;font-size:13px;">Loading...</div>';
 
     // Update price display
     var pairSym = symbol.replace('USDT', '');
@@ -3778,7 +3691,7 @@ function initPerpDetailChart(symbol, interval) {
             _perpDetailData = data.map(function (k) { return { x: +k[0], y: [+k[1], +k[2], +k[3], +k[4]] }; });
             _perpDetailChart = _rebuildChart(_perpDetailData, _perpDetailRaw, _perpDetailState, 'perp-detail-chart', 300);
             updateOHLCRow('perp-chart-ma-row', symbol, interval, data[data.length - 1]);
-        }).catch(function () { container.innerHTML = '<div style="padding:20px;text-align:center;color:#666;">Chart unavailable</div>'; });
+        }).catch(function () { container.innerHTML = '<div style="padding:20px;text-align:center;color:#a9a49a;">Chart unavailable</div>'; });
 
     if (_perpDetailWs) { try { _perpDetailWs.close(); } catch (e) { } _perpDetailWs = null; }
     function connectWs() {
@@ -3975,14 +3888,14 @@ function promptDisable2fa() {
         modal.id = 'disable-2fa-popup';
         modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:24px;';
         modal.innerHTML = `
-        <div style="background:#fff;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
-            <div style="width:48px;height:48px;border-radius:14px;background:#fef2f2;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
+        <div style="background:#11100e;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+            <div style="width:48px;height:48px;border-radius:14px;background:rgba(239,68,68,0.10);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
                 <i class="fa-solid fa-triangle-exclamation" style="color:#dc2626;font-size:20px;"></i>
             </div>
-            <div style="font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:14px;">Confirm Your Password</div>
+            <div style="font-size:15px;font-weight:700;color:#f5f1e8;margin-bottom:14px;">Confirm Your Password</div>
             <input type="password" id="disable-2fa-password" placeholder="Account password" style="width:100%;padding:13px;border:1.5px solid rgba(139,92,246,0.25);border-radius:12px;font-size:15px;margin-bottom:16px;outline:none;">
             <button id="disable-2fa-confirm-btn" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;background:#dc2626;color:#fff;margin-bottom:10px;">Remove Authenticator</button>
-            <button onclick="closeDisable2faPrompt()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#f3f4f6;color:#6b7280;">Cancel</button>
+            <button onclick="closeDisable2faPrompt()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#1a1814;color:#6b7280;">Cancel</button>
         </div>`;
         document.body.appendChild(modal);
     }
@@ -4217,11 +4130,11 @@ function showPromoBannerPopup(text) {
         modal.id = 'promo-banner-popup';
         modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:24px;';
         modal.innerHTML = `
-        <div style="background:#fff;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+        <div style="background:#11100e;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
                 <i class="fa-solid fa-bullhorn" style="color:#fff;font-size:20px;"></i>
             </div>
-            <div id="promo-banner-popup-text" style="font-size:14px;color:#1a1a2e;line-height:1.6;margin-bottom:20px;white-space:pre-wrap;"></div>
+            <div id="promo-banner-popup-text" style="font-size:14px;color:#f5f1e8;line-height:1.6;margin-bottom:20px;white-space:pre-wrap;"></div>
             <button onclick="closePromoBannerPopup()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;">Got it</button>
         </div>`;
         document.body.appendChild(modal);
@@ -4245,16 +4158,16 @@ function showIosInstallInstructions() {
         modal.id = 'ios-install-popup';
         modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:24px;';
         modal.innerHTML = `
-        <div style="background:#fff;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+        <div style="background:#11100e;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
                 <i class="fa-brands fa-apple" style="color:#fff;font-size:22px;"></i>
             </div>
-            <div style="font-size:15px;font-weight:700;color:#1a1a2e;margin-bottom:14px;">Install NETRONTRADE on iPhone</div>
-            <div style="text-align:left;font-size:13px;color:#4b5563;line-height:2;margin-bottom:20px;">
+            <div style="font-size:15px;font-weight:700;color:#f5f1e8;margin-bottom:14px;">Install NEOTRADE on iPhone</div>
+            <div style="text-align:left;font-size:13px;color:#a9a49a;line-height:2;margin-bottom:20px;">
                 1. Open this site in <b>Safari</b><br>
                 2. Tap the <b>Share</b> icon <i class="fa-solid fa-arrow-up-from-bracket"></i><br>
                 3. Tap <b>"Add to Home Screen"</b><br>
-                4. Tap <b>Add</b> — NETRONTRADE now opens like an app
+                4. Tap <b>Add</b> — NEOTRADE now opens like an app
             </div>
             <button onclick="closeIosInstallInstructions()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;">Got it</button>
         </div>`;
@@ -4630,7 +4543,7 @@ function renderShareTreePreview() {
 function shareRefLink() {
     if (!window.currentReferralLink) return;
     if (navigator.share) {
-        navigator.share({ title: 'Join NETRONTRADE', text: 'Join me on NETRONTRADE and start earning:', url: window.currentReferralLink }).catch(function () { });
+        navigator.share({ title: 'Join NEOTRADE', text: 'Join me on NEOTRADE and start earning:', url: window.currentReferralLink }).catch(function () { });
     } else {
         copyRefLink();
     }
@@ -4770,7 +4683,7 @@ async function fetchInitialPrices() {
 }
 
 function loadTickerText() {
-    const defaultText = 'NETRONTRADE — Trade with precision      Premium digital asset platform      Secure settlement      BTC, ETH, TRX and more         ';
+    const defaultText = 'NEOTRADE — Trade with precision      Premium digital asset platform      Secure settlement      BTC, ETH, TRX and more         ';
     function setTicker(text) {
         const t1 = document.getElementById('ticker-content-1');
         const t2 = document.getElementById('ticker-content-2');
@@ -5194,7 +5107,7 @@ async function loadBanners() {
                     <div style="width:22px;height:22px;border-radius:6px;overflow:hidden;flex-shrink:0;">
                         <img src="/netrontrade-logo.svg" style="width:100%;height:100%;object-fit:contain;">
                     </div>
-                    <span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:1px;">NETRONTRADE</span>
+                    <span style="font-size:12px;font-weight:800;color:#fff;letter-spacing:1px;">NEOTRADE</span>
                     <span style="font-size:9px;font-weight:700;color:#fff;padding:2px 7px;border-radius:20px;background:${b.badgeColor};">${b.badge}</span>
                 </div>
                 <!-- Headline -->
@@ -5402,7 +5315,7 @@ async function loadRulesScreen() {
                     <span style="font-size:12px;font-weight:800;color:#fff;">${i + 1}</span>
                 </div>
                 <div>
-                    <div style="font-size:12px;font-weight:700;color:#1a1a2e;margin-bottom:3px;">${s.title}</div>
+                    <div style="font-size:12px;font-weight:700;color:#f5f1e8;margin-bottom:3px;">${s.title}</div>
                     <div style="font-size:12px;color:#6b7280;line-height:1.6;">${s.desc}</div>
                 </div>
             </div>
@@ -5421,32 +5334,32 @@ async function loadRulesScreen() {
     const memEl = document.getElementById('rules-membership-plans');
     if (memEl) {
         memEl.innerHTML = rules.membershipPlans.map(p => `
-            <div style="border:${p.premium ? '1.5px solid #f59e0b' : '1px solid #e9e9f5'};border-radius:14px;padding:16px;background:${p.premium ? 'linear-gradient(135deg,#fffbeb,#fff)' : '#fafafe'};">
+            <div style="border:${p.premium ? '1.5px solid #f59e0b' : '1px solid rgba(214,181,106,0.18)'};border-radius:14px;padding:16px;background:${p.premium ? 'linear-gradient(135deg,rgba(245,158,11,0.14),#11100e)' : '#1a1814'};">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
                     ${p.premium ? '<i class="fa-solid fa-crown" style="color:#f59e0b;font-size:14px;"></i>' : '<i class="fa-solid fa-star" style="color:#8b5cf6;font-size:12px;"></i>'}
-                    <span style="font-size:14px;font-weight:700;color:#1a1a2e;">${p.name}</span>
+                    <span style="font-size:14px;font-weight:700;color:#f5f1e8;">${p.name}</span>
                     <span style="margin-left:auto;font-size:12px;font-weight:700;color:#8b5cf6;background:rgba(139,92,246,0.1);padding:3px 10px;border-radius:20px;">${p.priceRange}</span>
                 </div>
                 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
-                    <div style="background:#fff;border-radius:8px;padding:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+                    <div style="background:#11100e;border-radius:8px;padding:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);">
                         <div style="font-size:16px;font-weight:800;color:#8b5cf6;">${p.signals}</div>
                         <div style="font-size:11px;color:#9ca3af;">Daily Signals</div>
                     </div>
-                    <div style="background:#fff;border-radius:8px;padding:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+                    <div style="background:#11100e;border-radius:8px;padding:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);">
                         <div style="font-size:16px;font-weight:800;color:#10b981;">${p.welcomeBonusPct}%</div>
                         <div style="font-size:11px;color:#9ca3af;">Welcome Bonus</div>
                     </div>
-                    <div style="background:#fff;border-radius:8px;padding:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+                    <div style="background:#11100e;border-radius:8px;padding:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);">
                         <div style="font-size:16px;font-weight:800;color:#f59e0b;">${p.followTradeDays}</div>
                         <div style="font-size:11px;color:#9ca3af;">Follow Trade Days</div>
                     </div>
-                    <div style="background:#fff;border-radius:8px;padding:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.05);">
+                    <div style="background:#11100e;border-radius:8px;padding:8px;text-align:center;box-shadow:0 1px 4px rgba(0,0,0,0.35);">
                         <div style="font-size:16px;font-weight:800;color:#3b82f6;">$${p.foodAllowance}</div>
                         <div style="font-size:11px;color:#9ca3af;">Food Allowance</div>
                     </div>
                 </div>
                 ${p.bonusText ? `<div style="font-size:11px;color:#7c3aed;background:rgba(139,92,246,0.07);border-radius:8px;padding:8px 10px;">${p.bonusText}</div>` : ''}
-                ${p.warningText ? `<div style="margin-top:8px;font-size:11px;color:#dc2626;background:#fef2f2;border-radius:8px;padding:8px 10px;border-left:3px solid #f87171;">${p.warningText}</div>` : ''}
+                ${p.warningText ? `<div style="margin-top:8px;font-size:11px;color:#dc2626;background:rgba(239,68,68,0.10);border-radius:8px;padding:8px 10px;border-left:3px solid #f87171;">${p.warningText}</div>` : ''}
             </div>
         `).join('');
     }
@@ -5457,7 +5370,7 @@ async function loadRulesScreen() {
         ttEl.innerHTML = `
             <table style="width:100%;border-collapse:collapse;font-size:12px;min-width:260px;">
                 <thead>
-                    <tr style="background:#f8f5ff;">
+                    <tr style="background:#1a1814;">
                         <th style="color:#8b5cf6;padding:8px 6px;text-align:left;border-radius:8px 0 0 8px;font-weight:600;">Signal</th>
                         <th style="color:#8b5cf6;padding:8px 6px;text-align:center;font-weight:600;">UAE</th>
                         <th style="color:#8b5cf6;padding:8px 6px;text-align:center;font-weight:600;">Pakistan</th>
@@ -5466,8 +5379,8 @@ async function loadRulesScreen() {
                 </thead>
                 <tbody>
                     ${rules.tradeTimeTable.map((r, i) => `
-                    <tr style="border-bottom:1px solid #f0f0f8;${i % 2 === 0 ? 'background:#fafafe;' : ''}">
-                        <td style="padding:7px 6px;color:#1a1a2e;font-weight:600;">${r.label}</td>
+                    <tr style="border-bottom:1px solid rgba(214,181,106,0.14);${i % 2 === 0 ? 'background:#1a1814;' : ''}">
+                        <td style="padding:7px 6px;color:#f5f1e8;font-weight:600;">${r.label}</td>
                         <td style="padding:7px 6px;text-align:center;color:#6b7280;">${r.uae}</td>
                         <td style="padding:7px 6px;text-align:center;color:#6b7280;">${r.pakistan}</td>
                         <td style="padding:7px 6px;text-align:center;color:#6b7280;">${r.india}</td>
@@ -5481,7 +5394,7 @@ async function loadRulesScreen() {
     const notesEl = document.getElementById('rules-trade-notes');
     if (notesEl && rules.tradeNotes && rules.tradeNotes.length) {
         notesEl.innerHTML = rules.tradeNotes.map(note => `
-            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#4b5563;">
+            <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;color:#a9a49a;">
                 <i class="fa-solid fa-circle-check" style="color:#8b5cf6;font-size:11px;margin-top:2px;flex-shrink:0;"></i>
                 <span>${note}</span>
             </div>
@@ -5494,7 +5407,7 @@ async function loadRulesScreen() {
         shEl.innerHTML = `
             <table style="width:100%;border-collapse:collapse;font-size:12px;">
                 <thead>
-                    <tr style="background:#f8f5ff;">
+                    <tr style="background:#1a1814;">
                         <th style="color:#8b5cf6;padding:8px 6px;text-align:left;font-weight:600;">Level</th>
                         <th style="color:#8b5cf6;padding:8px 6px;text-align:center;font-weight:600;">Direct</th>
                         <th style="color:#8b5cf6;padding:8px 6px;text-align:center;font-weight:600;">Indirect</th>
@@ -5504,9 +5417,9 @@ async function loadRulesScreen() {
                 </thead>
                 <tbody>
                     ${rules.shareholderLevels.map((lv, i) => `
-                    <tr style="border-bottom:1px solid #f0f0f8;${i % 2 === 0 ? 'background:#fafafe;' : ''}">
+                    <tr style="border-bottom:1px solid rgba(214,181,106,0.14);${i % 2 === 0 ? 'background:#1a1814;' : ''}">
                         <td style="padding:7px 6px;font-weight:700;color:#7c3aed;">${lv.level}</td>
-                        <td style="padding:7px 6px;text-align:center;color:#1a1a2e;">${lv.directCount}</td>
+                        <td style="padding:7px 6px;text-align:center;color:#f5f1e8;">${lv.directCount}</td>
                         <td style="padding:7px 6px;text-align:center;color:#6b7280;">${lv.indirectCount != null ? lv.indirectCount : '—'}</td>
                         <td style="padding:7px 6px;text-align:center;color:#6b7280;">${lv.rewardIntervalDays}d</td>
                         <td style="padding:7px 6px;text-align:right;font-weight:700;color:#10b981;">$${lv.rewardAmount}</td>
@@ -5520,11 +5433,11 @@ async function loadRulesScreen() {
     const wdEl = document.getElementById('rules-withdrawal-rules');
     if (wdEl) {
         wdEl.innerHTML = rules.withdrawalRules.map((rule, i) => `
-            <div style="display:flex;align-items:flex-start;gap:10px;background:#fafafe;border-radius:10px;padding:10px 12px;">
+            <div style="display:flex;align-items:flex-start;gap:10px;background:#1a1814;border-radius:10px;padding:10px 12px;">
                 <div style="width:20px;height:20px;border-radius:50%;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                     <span style="font-size:10px;font-weight:800;color:#fff;">${i + 1}</span>
                 </div>
-                <span style="font-size:12px;color:#4b5563;line-height:1.6;">${rule}</span>
+                <span style="font-size:12px;color:#a9a49a;line-height:1.6;">${rule}</span>
             </div>
         `).join('');
     }
@@ -5558,12 +5471,12 @@ function loadReferralScreen() {
                     </div>`;
             } else {
                 listEl.innerHTML = refs.map(r => `
-                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f0f0f8;">
+                    <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(214,181,106,0.14);">
                         <div style="width:36px;height:36px;border-radius:50%;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <i class="fa-solid fa-user" style="color:#8b5cf6;font-size:14px;"></i>
                         </div>
                         <div style="flex:1;">
-                            <div style="font-size:13px;font-weight:600;color:#1a1a2e;">${r.username || r.email || 'Member'}</div>
+                            <div style="font-size:13px;font-weight:600;color:#f5f1e8;">${r.username || r.email || 'Member'}</div>
                             <div style="font-size:11px;color:#9ca3af;">${r.createdAt ? new Date(r.createdAt).toLocaleDateString() : ''}</div>
                         </div>
                         <div style="font-size:12px;font-weight:700;color:${r.balance > 0 ? '#10b981' : '#9ca3af'};">

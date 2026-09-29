@@ -1,7 +1,7 @@
 {
   "name": "netrontrade-platform",
   "version": "1.0.0",
-  "description": "NETRONTRADE Premium Digital Asset Platform",
+  "description": "NEOTRADE Premium Digital Asset Platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

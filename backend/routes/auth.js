@@ -1,5 +1,5 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const speakeasy = require('speakeasy');
@@ -11,29 +11,44 @@ const authMiddleware = require('../middlewares/auth');
 // In-memory OTP store: email → { code, expiry }
 const otpStore = new Map();
 
+const CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 function genCode(len = 8) {
-  return Math.random().toString(36).substring(2, 2 + len).toUpperCase();
+  let out = '';
+  for (let i = 0; i < len; i++) out += CODE_ALPHABET[crypto.randomInt(CODE_ALPHABET.length)];
+  return out;
 }
 
 function genOtp() {
-  return String(Math.floor(100000 + Math.random() * 900000));
+  return String(crypto.randomInt(100000, 1000000));
+}
+
+const MAX_OTP_ATTEMPTS = 5;
+
+function normEmail(raw) {
+  return String(raw || '').trim().toLowerCase();
+}
+
+// Emails of accounts created before registration lowercased them may be
+// stored with mixed case, so look them up case-insensitively.
+function findUserByEmail(email) {
+  return prisma.user.findFirst({ where: { email: { equals: email, mode: 'insensitive' } } });
 }
 
 const { getDepositAddress } = require('../config/depositAddress');
-const { sendOtpEmail } = require('../services/mailer');
+const { sendOtpEmail, sendPasswordResetEmail } = require('../services/mailer');
 
 router.post('/send-otp', async (req, res) => {
   try {
-    const { email } = req.body;
+    const email = normEmail(req.body.email);
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ error: 'Valid email required' });
     }
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const existing = await findUserByEmail(email);
     if (existing) return res.status(400).json({ error: 'Email already registered' });
 
     const code = genOtp();
-    otpStore.set(email.toLowerCase(), { code, expiry: Date.now() + 10 * 60 * 1000 });
-    await prisma.otpHistory.create({ data: { email: email.toLowerCase(), code } }).catch(() => {});
+    otpStore.set(email, { code, expiry: Date.now() + 10 * 60 * 1000, attempts: 0 });
+    await prisma.otpHistory.create({ data: { email, code } }).catch(() => {});
     
     // Send email
     const emailResult = await sendOtpEmail(email, code);
@@ -51,20 +66,27 @@ router.post('/send-otp', async (req, res) => {
 
 router.post('/register', async (req, res) => {
   try {
-    const { email, password, referralCode, otp, phone } = req.body;
+    const { password, referralCode, otp } = req.body;
+    const email = normEmail(req.body.email);
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Invalid email format' });
     if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
 
     // Verify OTP
     if (!otp) return res.status(400).json({ error: 'Verification code required' });
-    const stored = otpStore.get(email.toLowerCase());
-    if (!stored || stored.code !== String(otp) || Date.now() > stored.expiry) {
+    const stored = otpStore.get(email);
+    if (!stored || Date.now() > stored.expiry) {
+      otpStore.delete(email);
       return res.status(400).json({ error: 'Invalid or expired verification code' });
     }
-    otpStore.delete(email.toLowerCase());
+    if (stored.code !== String(otp).trim()) {
+      // Limit guesses so the 6-digit code cannot be brute-forced.
+      if (++stored.attempts >= MAX_OTP_ATTEMPTS) otpStore.delete(email);
+      return res.status(400).json({ error: 'Invalid or expired verification code' });
+    }
+    otpStore.delete(email);
 
-    const existing = await prisma.user.findUnique({ where: { email } });
+    const existing = await findUserByEmail(email);
     if (existing) return res.status(400).json({ error: 'Email already registered' });
 
     let referredById = null;
@@ -79,7 +101,6 @@ router.post('/register', async (req, res) => {
     const user = await prisma.user.create({
       data: {
         email,
-        phone: phone || null,
         password: hashed,
         referralCode: myCode,
         referredById,
@@ -98,16 +119,15 @@ router.post('/register', async (req, res) => {
 
 router.post('/login', async (req, res) => {
   try {
-    const { email, password } = req.body;
-    console.log(`Login attempt for: ${email}`);
+    const email = normEmail(req.body.email);
+    const { password } = req.body;
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
-    const user = await prisma.user.findUnique({ where: { email } });
+    const user = await findUserByEmail(email);
     if (!user) return res.status(400).json({ error: 'Invalid credentials' });
     if (user.suspended) return res.status(403).json({ error: 'Account suspended: ' + (user.suspendedReason || 'Contact support') });
 
     const valid = await bcrypt.compare(password, user.password);
-    console.log(`Password valid: ${valid}`);
     if (!valid) return res.status(400).json({ error: 'Incorrect password' });
 
     // Log login
@@ -160,15 +180,23 @@ router.post('/admin-login', async (req, res) => {
 
 router.post('/forgot-password', async (req, res) => {
   try {
-    const { email } = req.body;
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) return res.json({ message: 'If that email exists, a reset link was sent' });
-    const token = genCode(16);
+    const email = normEmail(req.body.email);
+    const generic = { message: 'If that email is registered, a reset code has been sent to it.' };
+    if (!email) return res.status(400).json({ error: 'Email required' });
+    const user = await findUserByEmail(email);
+    // Same response whether or not the account exists, and the token is only
+    // ever delivered by email — never in the HTTP response.
+    if (!user) return res.json(generic);
+    const token = genCode(10);
     await prisma.user.update({
       where: { id: user.id },
       data: { resetToken: token, resetTokenExpiry: new Date(Date.now() + 1800000) } // Expires in exactly 30 minutes
     });
-    res.json({ message: 'Reset token generated', resetToken: token });
+    const sent = await sendPasswordResetEmail(user.email, token);
+    if (!sent.success) {
+      return res.status(500).json({ error: 'Could not send the reset email. Please try again later or contact support.' });
+    }
+    res.json(generic);
   } catch (error) {
     res.status(500).json({ error: 'An internal server error occurred.' });
   }
@@ -178,8 +206,9 @@ router.post('/reset-password', async (req, res) => {
   try {
     const { token, newPassword } = req.body;
     if (!token || !newPassword) return res.status(400).json({ error: 'Token and new password required' });
+    if (String(newPassword).length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
     const user = await prisma.user.findFirst({
-      where: { resetToken: token, resetTokenExpiry: { gt: new Date() } }
+      where: { resetToken: String(token).trim().toUpperCase(), resetTokenExpiry: { gt: new Date() } }
     });
     if (!user) return res.status(400).json({ error: 'Invalid or expired reset token' });
     const hashed = await bcrypt.hash(newPassword, 10);

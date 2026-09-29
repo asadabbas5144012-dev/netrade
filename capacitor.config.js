@@ -1,6 +1,6 @@
-// Capacitor config for the NETRONTRADE Android app.
+// Capacitor config for the NEOTRADE Android app.
 //
-// The app is a thin native shell that loads the deployed NETRONTRADE server
+// The app is a thin native shell that loads the deployed NEOTRADE server
 // (server.url). Same-origin loading means the relative /api/... calls, socket.io
 // and cookies in frontend/app.js work unchanged, and no API secret ever ships
 // in the APK. www/ is only the offline fallback page + a bundled copy of the
@@ -29,7 +29,7 @@ if (/^(localhost|127\.|10\.|192\.168\.|0\.0\.0\.0)/.test(host) || host === '10.0
 /** @type {import('@capacitor/cli').CapacitorConfig} */
 module.exports = {
   appId: 'com.netrontrade.app',
-  appName: 'NETRONTRADE',
+  appName: 'NEOTRADE',
   webDir: 'www',
   server: {
     url: appUrl,

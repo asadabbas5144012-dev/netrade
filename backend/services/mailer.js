@@ -12,16 +12,21 @@ const nodemailer = require('nodemailer');
 //   SMTP_USER    SMTP login (for some providers this is not an email address,
 //                e.g. SendGrid's literal "apikey")
 //   SMTP_PASS    SMTP password / API key
-//   SMTP_FROM    Sender shown to users, e.g. "NETRONTRADE <no-reply@mydomain.com>".
-//                Must be a sender/domain verified with the provider. It is kept
-//                separate from SMTP_USER on purpose.
+//   SMTP_FROM    Sender shown to users. Defaults to
+//                "NEOTRADE <netradeofficiall@gmail.com>". Must be a sender
+//                verified with the provider. It is kept separate from SMTP_USER
+//                on purpose.
+//
+// Gmail SMTP: SMTP_USER=netradeofficiall@gmail.com and SMTP_PASS=<16-char Google
+// App Password>; SMTP_HOST then defaults to smtp.gmail.com (port 465).
 //
 // HTTPS alternative (recommended on Render): if BREVO_API_KEY is set, emails
 // go through Brevo's HTTP API on port 443, which Render never blocks, and the
 // SMTP_* variables above are ignored except SMTP_FROM (the verified sender).
 //   BREVO_API_KEY  Brevo -> SMTP & API -> API Keys (starts with "xkeysib-")
 
-const REQUIRED_VARS = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS', 'SMTP_FROM'];
+const DEFAULT_FROM = 'NEOTRADE <netradeofficiall@gmail.com>';
+const REQUIRED_VARS = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS'];
 
 // Strip surrounding quotes/whitespace pasted into env values.
 function env(name) {
@@ -33,24 +38,30 @@ function env(name) {
 }
 
 function readConfig() {
-  const port = parseInt(env('SMTP_PORT'), 10) || 587;
+  const user = env('SMTP_USER');
+  const isGmail = /@gmail\.com$/i.test(user);
+  const host = env('SMTP_HOST') || (isGmail ? 'smtp.gmail.com' : '');
+  const port = parseInt(env('SMTP_PORT'), 10) || (isGmail && !env('SMTP_HOST') ? 465 : 587);
   const secureRaw = env('SMTP_SECURE').toLowerCase();
   const secure = secureRaw ? secureRaw === 'true' : port === 465;
+  // Google shows App Passwords as "abcd efgh ijkl mnop"; the spaces are not part of it.
+  const pass = isGmail ? env('SMTP_PASS').replace(/\s+/g, '') : env('SMTP_PASS');
+  const values = { SMTP_HOST: host, SMTP_USER: user, SMTP_PASS: pass };
   return {
-    host: env('SMTP_HOST'),
+    host,
     port,
     secure,
-    user: env('SMTP_USER'),
-    pass: env('SMTP_PASS'),
-    from: env('SMTP_FROM'),
-    missing: REQUIRED_VARS.filter(name => !env(name))
+    user,
+    pass,
+    from: env('SMTP_FROM') || DEFAULT_FROM,
+    missing: REQUIRED_VARS.filter(name => !values[name])
   };
 }
 
 const config = readConfig();
 const brevoKey = env('BREVO_API_KEY');
 
-// "NETRONTRADE <no-reply@x.com>" -> { name, email }
+// "NEOTRADE <no-reply@x.com>" -> { name, email }
 function parseFrom(from) {
   const m = from.match(/^\s*(.*?)\s*<([^>]+)>\s*$/);
   return m ? { name: m[1].replace(/^"|"$/g, '') || undefined, email: m[2].trim() } : { email: from };
@@ -69,8 +80,7 @@ async function brevoRequest(path, body) {
 }
 
 if (brevoKey) {
-  if (config.from) console.log(`[Mailer] Using Brevo HTTP API, from ${config.from}`);
-  else console.error('[Mailer] BREVO_API_KEY is set but SMTP_FROM (verified sender) is missing. OTP emails will fail.');
+  console.log(`[Mailer] Using Brevo HTTP API, from ${config.from}`);
 } else if (config.missing.length) {
   console.error(`[Mailer] SMTP is not configured — missing ${config.missing.join(', ')}. OTP emails will fail until these are set in the environment.`);
 } else {
@@ -101,7 +111,6 @@ function describeError(error) {
 
 async function sendMail({ to, subject, html, text }) {
   if (brevoKey) {
-    if (!config.from) return { success: false, error: 'SMTP_FROM (verified sender) is not set' };
     try {
       const data = await brevoRequest('/smtp/email', { sender: parseFrom(config.from), to: [{ email: to }], subject, htmlContent: html, textContent: text });
       console.log(`[Mailer] Sent "${subject}" to ${to} via Brevo (${data.messageId})`);
@@ -128,27 +137,51 @@ async function sendMail({ to, subject, html, text }) {
 
 function layout(title, bodyHtml) {
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-      <h2 style="color: #333; text-align: center;">${title}</h2>
-      ${bodyHtml}
-      <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />
-      <p style="color: #999; font-size: 12px; text-align: center;">&copy; ${new Date().getFullYear()} NETRONTRADE. All rights reserved.</p>
+    <div style="background-color: #0b0e14; padding: 24px 12px; font-family: Arial, sans-serif;">
+      <div style="max-width: 560px; margin: 0 auto; background-color: #141821; border: 1px solid #2a2f3a; border-radius: 12px; padding: 28px 24px;">
+        <div style="text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 2px; color: #f1d98a; margin-bottom: 6px;">NEOTRADE</div>
+        <h2 style="color: #ffffff; text-align: center; font-size: 18px; margin: 0 0 20px;">${title}</h2>
+        ${bodyHtml}
+        <hr style="border: none; border-top: 1px solid #2a2f3a; margin: 24px 0 16px;" />
+        <p style="color: #8b93a7; font-size: 12px; text-align: center; margin: 0;">&copy; ${new Date().getFullYear()} NEOTRADE. All rights reserved.</p>
+      </div>
     </div>
   `;
 }
 
+function codeBlock(code) {
+  return `
+      <div style="background-color: #0b0e14; border: 1px solid #3a3320; padding: 16px; border-radius: 8px; text-align: center; margin: 20px 0;">
+        <span style="font-size: 26px; font-weight: bold; letter-spacing: 6px; color: #f1d98a;">${code}</span>
+      </div>`;
+}
+
+const P = 'color: #c9cfdb; font-size: 15px; line-height: 1.6;';
+
 async function sendOtpEmail(toEmail, otpCode) {
   return sendMail({
     to: toEmail,
-    subject: 'Your NETRONTRADE Verification Code',
-    text: `Your NETRONTRADE verification code is ${otpCode}. It expires in 10 minutes. If you did not request this, please ignore this email.`,
+    subject: 'Your NEOTRADE Verification Code',
+    text: `Your NEOTRADE verification code is ${otpCode}. It expires in 10 minutes. If you did not request this, please ignore this email.`,
     html: layout('Verification Code', `
-      <p style="color: #555; font-size: 16px;">Hello,</p>
-      <p style="color: #555; font-size: 16px;">Please use the following OTP code to verify your account or complete your sign-up process. This code will expire in 10 minutes.</p>
-      <div style="background-color: #f4f4f4; padding: 15px; border-radius: 5px; text-align: center; margin: 20px 0;">
-        <span style="font-size: 24px; font-weight: bold; letter-spacing: 5px; color: #000;">${otpCode}</span>
-      </div>
-      <p style="color: #555; font-size: 14px;">If you did not request this, please ignore this email.</p>
+      <p style="${P}">Hello,</p>
+      <p style="${P}">Use the following code to verify your email and complete your NEOTRADE sign-up. This code expires in 10 minutes.</p>
+      ${codeBlock(otpCode)}
+      <p style="color: #8b93a7; font-size: 13px;">If you did not request this, please ignore this email.</p>
+    `)
+  });
+}
+
+async function sendPasswordResetEmail(toEmail, resetCode) {
+  return sendMail({
+    to: toEmail,
+    subject: 'Reset your NEOTRADE password',
+    text: `Your NEOTRADE password reset code is ${resetCode}. It expires in 30 minutes. If you did not request a password reset, ignore this email — your password will not change.`,
+    html: layout('Password Reset', `
+      <p style="${P}">Hello,</p>
+      <p style="${P}">We received a request to reset your NEOTRADE password. Enter this code in the app to choose a new password. It expires in 30 minutes.</p>
+      ${codeBlock(resetCode)}
+      <p style="color: #8b93a7; font-size: 13px;">If you did not request a password reset, ignore this email — your password will not change.</p>
     `)
   });
 }
@@ -178,9 +211,9 @@ async function testSmtp(toEmail) {
   }
   const result = await sendMail({
     to: toEmail,
-    subject: 'NETRONTRADE SMTP test',
-    text: 'This is a test email from the NETRONTRADE admin panel. SMTP is working.',
-    html: layout('SMTP Test', '<p style="color: #555; font-size: 16px;">This is a test email from the NETRONTRADE admin panel. SMTP is working.</p>')
+    subject: 'NEOTRADE SMTP test',
+    text: 'This is a test email from the NEOTRADE admin panel. SMTP is working.',
+    html: layout('SMTP Test', `<p style="${P}">This is a test email from the NEOTRADE admin panel. SMTP is working.</p>`)
   });
   return result.success
     ? { success: true, message: `Test email sent to ${toEmail} from ${config.from}.` }
@@ -189,5 +222,6 @@ async function testSmtp(toEmail) {
 
 module.exports = {
   sendOtpEmail,
+  sendPasswordResetEmail,
   testSmtp
 };
