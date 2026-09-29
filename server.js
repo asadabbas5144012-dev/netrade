@@ -17,6 +17,10 @@ const SignalService = require('./backend/services/signalService');
 const MarketService = require('./backend/services/marketService');
 
 const app = express();
+// Render (and most hosts) sit behind one reverse proxy; without this every
+// request appears to come from the proxy's IP and the rate limits below would
+// throttle all users together.
+app.set('trust proxy', 1);
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: '*', methods: ['GET', 'POST'] }
@@ -36,16 +40,20 @@ if (process.env.APP_DOMAIN) {
   allowedOrigins.push(process.env.APP_DOMAIN);
   allowedOrigins.push(`https://${process.env.APP_DOMAIN}`);
 }
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Blocked by CORS policy'));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+// Render sets this to the service's public URL (e.g. https://my-app.onrender.com).
+if (process.env.RENDER_EXTERNAL_URL) allowedOrigins.push(process.env.RENDER_EXTERNAL_URL.replace(/\/+$/, ''));
+
+// The web app is served by this same server, so a request whose Origin matches
+// the Host it was sent to is always allowed — whatever domain the app runs on.
+app.use(cors((req, callback) => {
+  const origin = req.header('Origin');
+  let sameOrigin = false;
+  try { sameOrigin = !!origin && new URL(origin).host === req.headers.host; } catch (e) { }
+  if (!origin || sameOrigin || allowedOrigins.includes(origin)) {
+    callback(null, { origin: true, methods: ['GET', 'POST', 'PUT', 'DELETE'], credentials: true });
+  } else {
+    callback(new Error('Blocked by CORS policy'));
+  }
 }));
 
 // --- HARD SECURITY LAYER ---
@@ -131,12 +139,12 @@ app.get('/api/ticker', async (_req, res) => {
       prisma.platformSettings.findUnique({ where: { key: 'penalty_terms_text' } })
     ]);
     res.json({
-      text: tickerSetting ? tickerSetting.value : 'NETRONTRADE demonstrates commitment to secure and transparent digital asset operations.',
+      text: tickerSetting ? tickerSetting.value : 'NEOTRADE demonstrates commitment to secure and transparent digital asset operations.',
       penaltyTerms: termsSetting ? termsSetting.value : 'Please note that transferring principal funds from Trade back to Exchange before the lock period expires will incur an early withdrawal penalty.'
     });
   } catch (e) {
     res.json({
-      text: 'NETRONTRADE demonstrates commitment to secure and transparent digital asset operations.',
+      text: 'NEOTRADE demonstrates commitment to secure and transparent digital asset operations.',
       penaltyTerms: 'Please note that transferring principal funds from Trade back to Exchange before the lock period expires will incur an early withdrawal penalty.'
     });
   }
@@ -148,6 +156,23 @@ app.get('/api/ticker', async (_req, res) => {
 app.use((req, _res, next) => { req.io = io; next(); });
 
 // API Routes
+// Tighter limits on endpoints that send email or check passwords.
+const emailLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Too many code requests. Please wait a few minutes and try again.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 30,
+  message: { error: 'Too many login attempts. Please wait a few minutes and try again.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.use(['/api/auth/send-otp', '/api/auth/forgot-password'], emailLimiter);
+app.use(['/api/auth/login', '/api/auth/admin-login', '/api/auth/reset-password'], loginLimiter);
 app.use('/api/auth', require('./backend/routes/auth'));
 app.use('/api/user', require('./backend/routes/user'));
 app.use('/api/admin', require('./backend/routes/admin'));

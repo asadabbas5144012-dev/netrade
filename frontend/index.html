@@ -5,7 +5,7 @@
     <link rel="manifest" href="/manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>NETRONTRADE - Premium Digital Asset Platform</title>
+    <title>NEOTRADE - Premium Digital Asset Platform</title>
     <link rel="icon" href="/netrontrade-logo.svg" type="image/svg+xml">
     <link rel="icon" href="/favicon.png" type="image/png" sizes="64x64">
     <!-- iOS "Add to Home Screen" — Safari does not read manifest.json for
@@ -14,12 +14,11 @@
          regular Safari tab with the URL bar visible. -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="NETRONTRADE">
+    <meta name="apple-mobile-web-app-title" content="NEOTRADE">
     <link rel="apple-touch-icon" href="/app-icon.png">
-    <link rel="stylesheet" href="style.css?v=34">
+    <link rel="stylesheet" href="style.css?v=35">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>if (localStorage.getItem('theme') === 'light') { document.documentElement.classList.add('light-preload'); }</script>
 </head>
 
 <body>
@@ -111,9 +110,9 @@
     </style>
     <div id="app-preloader">
         <div class="pql-loader-wrap">
-            <img src="/netrontrade-logo.svg" class="pql-loader-logo" alt="NETRONTRADE">
+            <img src="/netrontrade-logo.svg" class="pql-loader-logo" alt="NEOTRADE">
         </div>
-        <div class="pql-loader-name">NETRONTRADE</div>
+        <div class="pql-loader-name">NEOTRADE</div>
         <div class="pql-loader-tag">Premium Digital Asset Platform</div>
         <div class="pql-loader-bar-wrap">
             <div class="pql-loader-bar"></div>
@@ -162,8 +161,8 @@
                 <i class="fa-solid fa-volume-low" style="color:#8b5cf6;font-size:14px;flex-shrink:0;"></i>
                 <div class="marquee-wrap" style="overflow:hidden;flex:1;">
                     <div class="pql-ticker-track" id="home-ticker-text">
-                        <span class="pql-ticker-inner" id="ticker-content-1">NETRONTRADE — Trade with precision &nbsp;&nbsp;&nbsp;&nbsp; Premium digital asset platform &nbsp;&nbsp;&nbsp;&nbsp; Secure settlement &nbsp;&nbsp;&nbsp;&nbsp; BTC, ETH, TRX and more &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        <span class="pql-ticker-inner" id="ticker-content-2" aria-hidden="true">NETRONTRADE — Trade with precision &nbsp;&nbsp;&nbsp;&nbsp; Premium digital asset platform &nbsp;&nbsp;&nbsp;&nbsp; Secure settlement &nbsp;&nbsp;&nbsp;&nbsp; BTC, ETH, TRX and more &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span class="pql-ticker-inner" id="ticker-content-1">NEOTRADE — Trade with precision &nbsp;&nbsp;&nbsp;&nbsp; Premium digital asset platform &nbsp;&nbsp;&nbsp;&nbsp; Secure settlement &nbsp;&nbsp;&nbsp;&nbsp; BTC, ETH, TRX and more &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <span class="pql-ticker-inner" id="ticker-content-2" aria-hidden="true">NEOTRADE — Trade with precision &nbsp;&nbsp;&nbsp;&nbsp; Premium digital asset platform &nbsp;&nbsp;&nbsp;&nbsp; Secure settlement &nbsp;&nbsp;&nbsp;&nbsp; BTC, ETH, TRX and more &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                     </div>
                 </div>
                 <i class="fa-solid fa-chevron-right" style="color:#9ca3af;font-size:12px;flex-shrink:0;"></i>
@@ -320,7 +319,7 @@
                 </div>
             </div>
 
-            <div style="padding:15px; border-bottom:1px solid #f0f0f0;">
+            <div style="padding:15px; border-bottom:1px solid rgba(214,181,106,0.14);">
                 <div class="timeframe-tabs new-style" id="futures-timeframes"
                     style="display:flex; gap:10px; margin-bottom:20px; padding:0; border-bottom:none;">
                     <button class="active" onclick="setTimeframe(this,'1m')" data-tf="1m" data-sec="60"
@@ -419,7 +418,7 @@
             <div id="order-panel-overlay" class="order-panel-overlay" onclick="closeOrderPanel()" style="display:none;">
             </div>
             <div id="order-panel" class="order-panel"
-                style="display:none; background:#fff; border-top:none; box-shadow:0 -4px 15px rgba(0,0,0,0.05);">
+                style="display:none; background:#11100e; border-top:none; box-shadow:0 -4px 15px rgba(0,0,0,0.35);">
                 <div class="order-panel-header">
                     <span class="order-pair-title" style="color:var(--text-secondary);">BTC / USDT</span>
                     <span onclick="closeOrderPanel()"
@@ -438,7 +437,7 @@
                         <div style="font-size:15px;color:#999;margin-bottom:15px;">Amount</div>
                         <div class="amount-input-box">
                             <input type="number" placeholder="Please enter quantity" id="order-amount"
-                                style="background:none;border:none;color:#333;font-size:15px;font-weight:400;width:100%;outline:none;">
+                                style="background:none;border:none;color:#f5f1e8;font-size:15px;font-weight:400;width:100%;outline:none;">
                         </div>
                         <div class="pct-buttons">
                             <button onclick="setOrderPct(1)">1%</button>
@@ -535,10 +534,10 @@
                     <!-- ACCESS CODE INPUT -->
                     <div id="perp-code-wrap" style="margin-bottom:10px;">
                         <div style="font-size:10px;color:#8b5cf6;font-weight:600;letter-spacing:0.5px;margin-bottom:5px;text-transform:uppercase;">Signal Access Code — Paste to Trade Instantly</div>
-                        <div style="display:flex;align-items:center;background:#f8f5ff;border:2px solid rgba(139,92,246,0.5);border-radius:10px;padding:0 10px;height:44px;gap:8px;transition:border-color 0.2s;" id="perp-code-box">
+                        <div style="display:flex;align-items:center;background:#1a1814;border:2px solid rgba(139,92,246,0.5);border-radius:10px;padding:0 10px;height:44px;gap:8px;transition:border-color 0.2s;" id="perp-code-box">
                             <i class="fa-solid fa-key" style="color:#8b5cf6;font-size:13px;flex-shrink:0;"></i>
                             <input type="text" id="perp-access-code" placeholder="Paste code here → auto trades..." autocomplete="off"
-                                style="background:none;border:none;color:#1a1a2e;font-size:13px;width:100%;outline:none;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;"
+                                style="background:none;border:none;color:#f5f1e8;font-size:13px;width:100%;outline:none;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;"
                                 oninput="this.value=this.value.toUpperCase(); onAccessCodeInput(this.value)"
                                 onpaste="setTimeout(()=>{ this.value=this.value.trim().toUpperCase(); onAccessCodeInput(this.value); },50)">
                             <i class="fa-regular fa-clipboard" onclick="pasteAccessCode()" style="color:#8b5cf6;font-size:15px;cursor:pointer;flex-shrink:0;" title="Paste from clipboard"></i>
@@ -812,64 +811,64 @@
             <div class="pc-card-group">
 
                 <div class="pc-menu-row" onclick="navTo('transaction-screen')">
-                    <div class="pc-menu-icon" style="background:#f0f0ff;"><i class="fa-solid fa-clock-rotate-left" style="color:#7c3aed;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:#1a1814;"><i class="fa-solid fa-clock-rotate-left" style="color:#7c3aed;font-size:14px;"></i></div>
                     <span>Order Records</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('transaction-screen')">
-                    <div class="pc-menu-icon" style="background:#fff7ed;"><i class="fa-solid fa-receipt" style="color:#d97706;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:rgba(249,115,22,0.10);"><i class="fa-solid fa-receipt" style="color:#d97706;font-size:14px;"></i></div>
                     <span>Fund Details</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('deposit-record-screen')">
-                    <div class="pc-menu-icon" style="background:#f0fdf4;"><i class="fa-solid fa-download" style="color:#16a34a;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:rgba(16,185,129,0.10);"><i class="fa-solid fa-download" style="color:#16a34a;font-size:14px;"></i></div>
                     <span>Deposit Records</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('withdrawal-record-screen')">
-                    <div class="pc-menu-icon" style="background:#fef2f2;"><i class="fa-solid fa-upload" style="color:#dc2626;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:rgba(239,68,68,0.10);"><i class="fa-solid fa-upload" style="color:#dc2626;font-size:14px;"></i></div>
                     <span>Withdrawal Records</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('share-screen')">
-                    <div class="pc-menu-icon" style="background:#fdf4ff;"><i class="fa-solid fa-user-plus" style="color:#a855f7;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:#1a1814;"><i class="fa-solid fa-user-plus" style="color:#a855f7;font-size:14px;"></i></div>
                     <span>Invite Friends</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
 
                 <div class="pc-menu-row" onclick="navTo('basic-verification-screen')">
-                    <div class="pc-menu-icon" style="background:#eff6ff;"><i class="fa-solid fa-id-card" style="color:#3b82f6;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:#1a1814;"><i class="fa-solid fa-id-card" style="color:#3b82f6;font-size:14px;"></i></div>
                     <span>Identity Verification</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
 
                 <div class="pc-menu-row" onclick="showToast('Language: English')">
-                    <div class="pc-menu-icon" style="background:#f0f9ff;"><i class="fa-solid fa-globe" style="color:#0ea5e9;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:#1a1814;"><i class="fa-solid fa-globe" style="color:#0ea5e9;font-size:14px;"></i></div>
                     <span>Language</span>
                     <div style="display:flex;align-items:center;gap:6px;margin-left:auto;"><span style="font-size:12px;color:#9ca3af;">English</span><i class="fa-solid fa-chevron-right pc-arr"></i></div>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('support-screen')">
-                    <div class="pc-menu-icon" style="background:#f0f0ff;"><i class="fa-solid fa-headset" style="color:#7c3aed;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:#1a1814;"><i class="fa-solid fa-headset" style="color:#7c3aed;font-size:14px;"></i></div>
                     <span>Customer Support</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('rules-screen')">
-                    <div class="pc-menu-icon" style="background:#f0f0ff;"><i class="fa-solid fa-scale-balanced" style="color:#7c3aed;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:#1a1814;"><i class="fa-solid fa-scale-balanced" style="color:#7c3aed;font-size:14px;"></i></div>
                     <span>Rules &amp; Guidelines</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('about-screen')">
-                    <div class="pc-menu-icon" style="background:#f8f9fa;"><i class="fa-solid fa-circle-info" style="color:#6b7280;font-size:14px;"></i></div>
-                    <span>About NETRONTRADE</span>
+                    <div class="pc-menu-icon" style="background:#1a1814;"><i class="fa-solid fa-circle-info" style="color:#6b7280;font-size:14px;"></i></div>
+                    <span>About NEOTRADE</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
@@ -880,19 +879,19 @@
             <div class="pc-card-group">
 
                 <div class="pc-menu-row" onclick="navTo('change-password-screen')">
-                    <div class="pc-menu-icon" style="background:#fef3ff;"><i class="fa-solid fa-lock" style="color:#a855f7;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:#1a1814;"><i class="fa-solid fa-lock" style="color:#a855f7;font-size:14px;"></i></div>
                     <span>Change Password</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('bind-address-screen')">
-                    <div class="pc-menu-icon" style="background:#fff7ed;"><i class="fa-solid fa-wallet" style="color:#f59e0b;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:rgba(249,115,22,0.10);"><i class="fa-solid fa-wallet" style="color:#f59e0b;font-size:14px;"></i></div>
                     <span>Bind Withdrawal Address</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
 
                 <div class="pc-menu-row" onclick="navTo('google-auth-screen')">
-                    <div class="pc-menu-icon" style="background:#f0fdf4;"><i class="fa-brands fa-google" style="color:#22c55e;font-size:14px;"></i></div>
+                    <div class="pc-menu-icon" style="background:rgba(16,185,129,0.10);"><i class="fa-brands fa-google" style="color:#22c55e;font-size:14px;"></i></div>
                     <span>Google Authenticator</span>
                     <i class="fa-solid fa-chevron-right pc-arr"></i>
                 </div>
@@ -927,95 +926,95 @@
             </div>
 
             <!-- Quick Actions -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.05);display:flex;justify-content:space-around;">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.35);display:flex;justify-content:space-around;">
                 <div onclick="navTo('deposit-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;">
                     <div style="width:44px;height:44px;border-radius:14px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;">
                         <i class="fa-solid fa-download" style="color:#10b981;font-size:18px;"></i>
                     </div>
-                    <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Deposit</span>
+                    <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Deposit</span>
                 </div>
                 <div onclick="navTo('withdrawal-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;">
                     <div style="width:44px;height:44px;border-radius:14px;background:rgba(239,68,68,0.1);display:flex;align-items:center;justify-content:center;">
                         <i class="fa-solid fa-upload" style="color:#ef4444;font-size:18px;"></i>
                     </div>
-                    <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Withdraw</span>
+                    <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Withdraw</span>
                 </div>
                 <div onclick="navTo('fund-transfer-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;">
                     <div style="width:44px;height:44px;border-radius:14px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;">
                         <i class="fa-solid fa-shuffle" style="color:#8b5cf6;font-size:18px;"></i>
                     </div>
-                    <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Transfer</span>
+                    <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Transfer</span>
                 </div>
             </div>
 
             <!-- Assets List -->
-            <div style="margin:0 14px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-                <div style="padding:14px 16px;border-bottom:1px solid #f5f5ff;">
-                    <span style="font-size:13px;font-weight:700;color:#1a1a2e;">My Assets</span>
+            <div style="margin:0 14px;background:#11100e;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
+                <div style="padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);">
+                    <span style="font-size:13px;font-weight:700;color:#f5f1e8;">My Assets</span>
                 </div>
 
                 <!-- USDT -->
-                <div style="padding:14px 16px;border-bottom:1px solid #f5f5ff;display:flex;align-items:center;justify-content:space-between;">
+                <div style="padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);display:flex;align-items:center;justify-content:space-between;">
                     <div style="display:flex;align-items:center;gap:10px;">
                         <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" style="width:36px;height:36px;border-radius:50%;">
                         <div>
-                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;">USDT</div>
+                            <div style="font-size:14px;font-weight:700;color:#f5f1e8;">USDT</div>
                             <div style="font-size:11px;color:#9ca3af;">Tether</div>
                         </div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:14px;font-weight:700;color:#1a1a2e;" id="exch-usdt-avail">0.00</div>
+                        <div style="font-size:14px;font-weight:700;color:#f5f1e8;" id="exch-usdt-avail">0.00</div>
                         <div style="font-size:11px;color:#9ca3af;" id="exch-usdt-val">≈ $0.00</div>
                     </div>
                 </div>
 
                 <!-- ETH -->
-                <div style="padding:14px 16px;border-bottom:1px solid #f5f5ff;display:flex;align-items:center;justify-content:space-between;">
+                <div style="padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);display:flex;align-items:center;justify-content:space-between;">
                     <div style="display:flex;align-items:center;gap:10px;">
                         <div style="width:36px;height:36px;border-radius:50%;background:#627eea;display:flex;align-items:center;justify-content:center;">
                             <i class="fa-brands fa-ethereum" style="color:#fff;font-size:16px;"></i>
                         </div>
                         <div>
-                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;">ETH</div>
+                            <div style="font-size:14px;font-weight:700;color:#f5f1e8;">ETH</div>
                             <div style="font-size:11px;color:#9ca3af;">Ethereum</div>
                         </div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:14px;font-weight:700;color:#1a1a2e;">0</div>
+                        <div style="font-size:14px;font-weight:700;color:#f5f1e8;">0</div>
                         <div style="font-size:11px;color:#9ca3af;">≈ $0.00</div>
                     </div>
                 </div>
 
                 <!-- BTC -->
-                <div style="padding:14px 16px;border-bottom:1px solid #f5f5ff;display:flex;align-items:center;justify-content:space-between;">
+                <div style="padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);display:flex;align-items:center;justify-content:space-between;">
                     <div style="display:flex;align-items:center;gap:10px;">
                         <div style="width:36px;height:36px;border-radius:50%;background:#f7931a;display:flex;align-items:center;justify-content:center;">
                             <i class="fa-brands fa-bitcoin" style="color:#fff;font-size:16px;"></i>
                         </div>
                         <div>
-                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;">BTC</div>
+                            <div style="font-size:14px;font-weight:700;color:#f5f1e8;">BTC</div>
                             <div style="font-size:11px;color:#9ca3af;">Bitcoin</div>
                         </div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:14px;font-weight:700;color:#1a1a2e;" id="exch-btc-avail">0</div>
+                        <div style="font-size:14px;font-weight:700;color:#f5f1e8;" id="exch-btc-avail">0</div>
                         <div style="font-size:11px;color:#9ca3af;" id="exch-btc-val">≈ $0.00</div>
                     </div>
                 </div>
 
                 <!-- USDC -->
-                <div style="padding:14px 16px;border-bottom:1px solid #f5f5ff;display:flex;align-items:center;justify-content:space-between;">
+                <div style="padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);display:flex;align-items:center;justify-content:space-between;">
                     <div style="display:flex;align-items:center;gap:10px;">
                         <div style="width:36px;height:36px;border-radius:50%;background:#2775ca;display:flex;align-items:center;justify-content:center;">
                             <i class="fa-solid fa-dollar-sign" style="color:#fff;font-size:16px;"></i>
                         </div>
                         <div>
-                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;">USDC</div>
+                            <div style="font-size:14px;font-weight:700;color:#f5f1e8;">USDC</div>
                             <div style="font-size:11px;color:#9ca3af;">USD Coin</div>
                         </div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:14px;font-weight:700;color:#1a1a2e;">0</div>
+                        <div style="font-size:14px;font-weight:700;color:#f5f1e8;">0</div>
                         <div style="font-size:11px;color:#9ca3af;">≈ $0.00</div>
                     </div>
                 </div>
@@ -1027,12 +1026,12 @@
                             <b style="color:#fff;font-size:14px;">D</b>
                         </div>
                         <div>
-                            <div style="font-size:14px;font-weight:700;color:#1a1a2e;">DAI</div>
+                            <div style="font-size:14px;font-weight:700;color:#f5f1e8;">DAI</div>
                             <div style="font-size:11px;color:#9ca3af;">Dai Stablecoin</div>
                         </div>
                     </div>
                     <div style="text-align:right;">
-                        <div style="font-size:14px;font-weight:700;color:#1a1a2e;">0</div>
+                        <div style="font-size:14px;font-weight:700;color:#f5f1e8;">0</div>
                         <div style="font-size:11px;color:#9ca3af;">≈ $0.00</div>
                     </div>
                 </div>
@@ -1056,7 +1055,7 @@
                 <div style="display:flex;align-items:center;gap:10px;">
                     <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" style="width:40px;height:40px;border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,0.1);">
                     <div>
-                        <div style="font-size:17px;font-weight:800;color:#1a1a2e;">USDT</div>
+                        <div style="font-size:17px;font-weight:800;color:#f5f1e8;">USDT</div>
                         <div style="font-size:11px;color:#9ca3af;">Tether</div>
                     </div>
                 </div>
@@ -1068,22 +1067,22 @@
             <!-- NETWORK — only TRC20 is supported. Every account deposits to the
                  same fixed platform TRC20 address, loaded from the backend
                  (GET /api/wallet/address) into #dep-addr below. -->
-            <div style="padding:0 16px 16px;background:#fff;">
+            <div style="padding:0 16px 16px;background:#11100e;">
                 <div style="font-size:12px;color:#9ca3af;font-weight:600;margin-bottom:10px;letter-spacing:0.5px;">NETWORK</div>
                 <div style="display:inline-flex;padding:10px 16px;border-radius:12px;border:1.5px solid #8b5cf6;background:rgba(139,92,246,0.08);color:#7c3aed;font-size:13px;font-weight:700;">TRC20</div>
             </div>
 
             <!-- QR + ADDRESS CARD -->
-            <div style="margin:0 16px 16px;background:#fff;border-radius:20px;padding:24px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.06);text-align:center;">
+            <div style="margin:0 16px 16px;background:#11100e;border-radius:20px;padding:24px 20px;box-shadow:0 4px 16px rgba(0,0,0,0.35);text-align:center;">
                 <!-- QR Box -->
-                <div id="dep-qr-box" style="width:170px;height:170px;margin:0 auto 18px;background:linear-gradient(135deg,#f8f5ff,#ede9ff);border-radius:20px;display:flex;align-items:center;justify-content:center;border:2px solid rgba(139,92,246,0.15);box-shadow:0 4px 20px rgba(139,92,246,0.12);">
+                <div id="dep-qr-box" style="width:170px;height:170px;margin:0 auto 18px;background:linear-gradient(135deg,#1a1814,#1a1814);border-radius:20px;display:flex;align-items:center;justify-content:center;border:2px solid rgba(139,92,246,0.15);box-shadow:0 4px 20px rgba(139,92,246,0.12);">
                     <i class="fa-solid fa-qrcode" style="font-size:100px;color:#8b5cf6;opacity:0.7;"></i>
                 </div>
                 <!-- Address Label -->
                 <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">DEPOSIT ADDRESS (TRC20)</div>
                 <!-- Address Box -->
-                <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.15);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;">
-                    <span id="dep-addr" style="font-size:12px;color:#1a1a2e;word-break:break-all;line-height:1.5;font-weight:500;">—</span>
+                <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.15);border-radius:14px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;">
+                    <span id="dep-addr" style="font-size:12px;color:#f5f1e8;word-break:break-all;line-height:1.5;font-weight:500;">—</span>
                     <i class="fa-regular fa-copy" id="dep-copy-btn" onclick="copyDepositAddress()" style="cursor:pointer;color:#8b5cf6;font-size:18px;flex-shrink:0;padding:4px;"></i>
                 </div>
                 <!-- Copy Button -->
@@ -1093,21 +1092,21 @@
             </div>
 
             <!-- SUBMIT TXID CARD — verified on-chain by POST /api/wallet/deposit/submit -->
-            <div style="margin:0 16px 16px;background:#fff;border-radius:20px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.06);">
+            <div style="margin:0 16px 16px;background:#11100e;border-radius:20px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
                 <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">ALREADY SENT? SUBMIT YOUR TXID</div>
-                <input id="dep-txid" type="text" autocomplete="off" spellcheck="false" placeholder="Transaction hash (TXID)" style="width:100%;box-sizing:border-box;padding:13px 14px;border:1.5px solid rgba(139,92,246,0.25);border-radius:14px;font-size:13px;color:#1a1a2e;background:#f8f5ff;outline:none;">
+                <input id="dep-txid" type="text" autocomplete="off" spellcheck="false" placeholder="Transaction hash (TXID)" style="width:100%;box-sizing:border-box;padding:13px 14px;border:1.5px solid rgba(139,92,246,0.25);border-radius:14px;font-size:13px;color:#f5f1e8;background:#1a1814;outline:none;">
                 <button id="dep-submit-btn" onclick="submitDepositTxid()" style="width:100%;margin-top:12px;padding:13px;border:none;border-radius:14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(139,92,246,0.35);">
                     <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i>Submit Deposit
                 </button>
             </div>
 
             <!-- NOTICE CARD -->
-            <div style="margin:0 16px 24px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:16px;padding:16px;">
+            <div style="margin:0 16px 24px;background:rgba(245,158,11,0.10);border:1.5px solid rgba(214,181,106,0.14);border-radius:16px;padding:16px;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
                     <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;font-size:16px;"></i>
-                    <span style="font-size:14px;font-weight:700;color:#92400e;">Important Notice</span>
+                    <span style="font-size:14px;font-weight:700;color:#f5b041;">Important Notice</span>
                 </div>
-                <ol style="padding-left:16px;margin:0;color:#78350f;font-size:12px;line-height:1.8;list-style-type:decimal;">
+                <ol style="padding-left:16px;margin:0;color:#f5b041;font-size:12px;line-height:1.8;list-style-type:decimal;">
                     <li style="margin-bottom:6px;">Only send USDT to this address. Sending other coins may result in permanent loss.</li>
                     <li style="margin-bottom:6px;">After sending, submit your transaction hash (TXID) above. It is verified on the TRON network and credited after approval. Minimum deposit: 1 USDT.</li>
                     <li style="margin-bottom:6px;">Ensure your browser is secure to prevent information leakage.</li>
@@ -1132,7 +1131,7 @@
                 <div style="display:flex;align-items:center;gap:10px;">
                     <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" style="width:40px;height:40px;border-radius:50%;box-shadow:0 3px 10px rgba(0,0,0,0.1);">
                     <div>
-                        <div style="font-size:17px;font-weight:800;color:#1a1a2e;">USDT</div>
+                        <div style="font-size:17px;font-weight:800;color:#f5f1e8;">USDT</div>
                         <div style="font-size:11px;color:#9ca3af;">Tether • TRC20</div>
                     </div>
                 </div>
@@ -1142,15 +1141,15 @@
             </div>
 
             <!-- FORM CARD -->
-            <div style="margin:12px 16px;background:#fff;border-radius:20px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.06);">
+            <div style="margin:12px 16px;background:#11100e;border-radius:20px;padding:20px;box-shadow:0 4px 16px rgba(0,0,0,0.35);">
 
                 <!-- Withdrawal Address -->
                 <div style="margin-bottom:18px;">
                     <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">WITHDRAWAL ADDRESS</div>
-                    <div style="display:flex;align-items:center;background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;gap:10px;transition:border-color 0.2s;">
+                    <div style="display:flex;align-items:center;background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;gap:10px;transition:border-color 0.2s;">
                         <i class="fa-solid fa-wallet" style="color:#8b5cf6;font-size:15px;flex-shrink:0;"></i>
                         <input type="text" placeholder="Enter wallet address" id="withdrawal-addr"
-                            style="background:none;border:none;color:#1a1a2e;font-size:14px;width:100%;outline:none;font-family:inherit;">
+                            style="background:none;border:none;color:#f5f1e8;font-size:14px;width:100%;outline:none;font-family:inherit;">
                         <i class="fa-regular fa-clipboard" onclick="pasteAddress()" style="cursor:pointer;color:#8b5cf6;font-size:17px;flex-shrink:0;"></i>
                     </div>
                 </div>
@@ -1158,10 +1157,10 @@
                 <!-- Amount -->
                 <div style="margin-bottom:10px;">
                     <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">WITHDRAWAL AMOUNT</div>
-                    <div style="display:flex;align-items:center;background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;gap:10px;">
+                    <div style="display:flex;align-items:center;background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;gap:10px;">
                         <span style="font-size:14px;color:#9ca3af;flex-shrink:0;">USDT</span>
                         <input type="number" id="withdrawal-amount" placeholder="0.00" oninput="updateWithdrawalFeeCalc()"
-                            style="background:none;border:none;color:#1a1a2e;font-size:18px;font-weight:700;width:100%;outline:none;text-align:right;">
+                            style="background:none;border:none;color:#f5f1e8;font-size:18px;font-weight:700;width:100%;outline:none;text-align:right;">
                         <span onclick="setWithdrawalMax()" style="color:#8b5cf6;font-size:13px;font-weight:700;cursor:pointer;flex-shrink:0;background:rgba(139,92,246,0.1);padding:4px 10px;border-radius:8px;">ALL</span>
                     </div>
                     <div id="withdrawal-balance-text" style="font-size:12px;color:#9ca3af;margin-top:8px;padding-left:2px;">Available: 0.00 USDT</div>
@@ -1170,7 +1169,7 @@
                 <!-- Handling Fee -->
                 <div>
                     <div id="withdrawal-fee-label" style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">HANDLING FEE</div>
-                    <div style="display:flex;align-items:center;background:#f8f8f8;border:1.5px solid #e8e8f0;border-radius:14px;padding:13px 16px;gap:10px;">
+                    <div style="display:flex;align-items:center;background:#1a1814;border:1.5px solid rgba(214,181,106,0.14);border-radius:14px;padding:13px 16px;gap:10px;">
                         <span style="font-size:14px;color:#9ca3af;flex-shrink:0;">USDT</span>
                         <input type="number" id="withdrawal-fee" disabled placeholder="0.00"
                             style="background:none;border:none;color:#9ca3af;font-size:18px;font-weight:700;width:100%;outline:none;text-align:right;">
@@ -1178,19 +1177,19 @@
                 </div>
 
                 <!-- You receive row -->
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid #f0f0f8;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding-top:16px;border-top:1px solid rgba(214,181,106,0.14);">
                     <span style="font-size:13px;color:#6b7280;font-weight:500;">You will receive</span>
                     <span id="withdrawal-receive-amt" style="font-size:16px;font-weight:800;color:#059669;">— USDT</span>
                 </div>
             </div>
 
             <!-- NOTICE CARD -->
-            <div style="margin:0 16px 16px;background:#fffbeb;border:1.5px solid #fde68a;border-radius:16px;padding:16px;">
+            <div style="margin:0 16px 16px;background:rgba(245,158,11,0.10);border:1.5px solid rgba(214,181,106,0.14);border-radius:16px;padding:16px;">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;">
                     <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;font-size:16px;"></i>
-                    <span style="font-size:14px;font-weight:700;color:#92400e;">Important Notice</span>
+                    <span style="font-size:14px;font-weight:700;color:#f5b041;">Important Notice</span>
                 </div>
-                <ol style="padding-left:16px;margin:0;color:#78350f;font-size:12px;line-height:1.8;">
+                <ol style="padding-left:16px;margin:0;color:#f5b041;font-size:12px;line-height:1.8;">
                     <li style="margin-bottom:4px;">After submitting, funds are frozen until the withdrawal is processed.</li>
                     <li style="margin-bottom:4px;">Credits arrive within 24 hours. Contact support if delayed.</li>
                     <li>Withdrawal limits apply based on your trading volume and verification level.</li>
@@ -1206,16 +1205,16 @@
 
             <!-- BIND ADDRESS MODAL -->
             <div id="bind-addr-tip-overlay" class="tips-overlay" style="display:none;" onclick="closeBindAddrTip()">
-                <div class="tips-modal" onclick="event.stopPropagation()" style="background:#fff;border-radius:20px;padding:24px;max-width:320px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
+                <div class="tips-modal" onclick="event.stopPropagation()" style="background:#11100e;border-radius:20px;padding:24px;max-width:320px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.15);">
                     <div style="text-align:center;margin-bottom:16px;">
                         <div style="width:56px;height:56px;border-radius:16px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;">
                             <i class="fa-solid fa-link" style="color:#8b5cf6;font-size:22px;"></i>
                         </div>
-                        <div style="font-size:16px;font-weight:700;color:#1a1a2e;margin-bottom:8px;">Bind Withdrawal Address</div>
+                        <div style="font-size:16px;font-weight:700;color:#f5f1e8;margin-bottom:8px;">Bind Withdrawal Address</div>
                         <p style="font-size:13px;color:#6b7280;line-height:1.6;">You have not bound a withdrawal address yet. Please bind one first before withdrawing.</p>
                     </div>
                     <div style="display:flex;gap:10px;">
-                        <button onclick="closeBindAddrTip()" style="flex:1;padding:12px;border:1.5px solid #e0e0f0;border-radius:12px;background:#f8f8ff;color:#6b7280;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>
+                        <button onclick="closeBindAddrTip()" style="flex:1;padding:12px;border:1.5px solid rgba(214,181,106,0.14);border-radius:12px;background:#1a1814;color:#6b7280;font-size:14px;font-weight:600;cursor:pointer;">Cancel</button>
                         <button onclick="closeBindAddrTip(); navTo('bind-address-screen');" style="flex:1;padding:12px;border:none;border-radius:12px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;font-size:14px;font-weight:700;cursor:pointer;">Bind Now</button>
                     </div>
                 </div>
@@ -1298,18 +1297,18 @@
                 <!-- FROM — selectable -->
                 <div style="margin-bottom:16px;">
                     <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">FROM</div>
-                    <div onclick="toggleDropdown('from-dropdown')" style="background:#fff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                    <div onclick="toggleDropdown('from-dropdown')" style="background:#11100e;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.35);">
                         <div style="display:flex;align-items:center;gap:10px;">
                             <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-arrow-right-from-bracket" style="color:#8b5cf6;font-size:14px;"></i>
                             </div>
-                            <span id="from-wallet-label" style="color:#1a1a2e;font-size:15px;font-weight:600;">Exchange</span>
+                            <span id="from-wallet-label" style="color:#f5f1e8;font-size:15px;font-weight:600;">Exchange</span>
                         </div>
                         <i class="fa-solid fa-chevron-down" style="color:#9ca3af;font-size:12px;"></i>
                     </div>
-                    <div class="dropdown-menu" id="from-dropdown" style="display:none;background:#fff;border:1.5px solid rgba(139,92,246,0.15);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.1);margin-top:4px;overflow:hidden;">
-                        <div class="dropdown-item" style="color:#1a1a2e;border-bottom:1px solid #f5f5ff;padding:14px 16px;" onclick="selectTransferWallet('from','Exchange')">Exchange</div>
-                        <div class="dropdown-item" style="color:#1a1a2e;padding:14px 16px;" onclick="selectTransferWallet('from','Perpetual')">Perpetual</div>
+                    <div class="dropdown-menu" id="from-dropdown" style="display:none;background:#11100e;border:1.5px solid rgba(139,92,246,0.15);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.1);margin-top:4px;overflow:hidden;">
+                        <div class="dropdown-item" style="color:#f5f1e8;border-bottom:1px solid rgba(214,181,106,0.14);padding:14px 16px;" onclick="selectTransferWallet('from','Exchange')">Exchange</div>
+                        <div class="dropdown-item" style="color:#f5f1e8;padding:14px 16px;" onclick="selectTransferWallet('from','Perpetual')">Perpetual</div>
                     </div>
                 </div>
 
@@ -1323,18 +1322,18 @@
                 <!-- TO — selectable -->
                 <div style="margin-bottom:16px;">
                     <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">TO</div>
-                    <div onclick="toggleDropdown('to-dropdown')" style="background:#fff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                    <div onclick="toggleDropdown('to-dropdown')" style="background:#11100e;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.35);">
                         <div style="display:flex;align-items:center;gap:10px;">
                             <div style="width:34px;height:34px;border-radius:10px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-arrow-right-to-bracket" style="color:#10b981;font-size:14px;"></i>
                             </div>
-                            <span id="to-wallet-label" style="color:#1a1a2e;font-size:15px;font-weight:600;">Perpetual</span>
+                            <span id="to-wallet-label" style="color:#f5f1e8;font-size:15px;font-weight:600;">Perpetual</span>
                         </div>
                         <i class="fa-solid fa-chevron-down" style="color:#9ca3af;font-size:12px;"></i>
                     </div>
-                    <div class="dropdown-menu" id="to-dropdown" style="display:none;background:#fff;border:1.5px solid rgba(139,92,246,0.15);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.1);margin-top:4px;overflow:hidden;">
-                        <div class="dropdown-item" style="color:#1a1a2e;border-bottom:1px solid #f5f5ff;padding:14px 16px;" onclick="selectTransferWallet('to','Exchange')">Exchange</div>
-                        <div class="dropdown-item" style="color:#1a1a2e;padding:14px 16px;" onclick="selectTransferWallet('to','Perpetual')">Perpetual</div>
+                    <div class="dropdown-menu" id="to-dropdown" style="display:none;background:#11100e;border:1.5px solid rgba(139,92,246,0.15);border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,0.1);margin-top:4px;overflow:hidden;">
+                        <div class="dropdown-item" style="color:#f5f1e8;border-bottom:1px solid rgba(214,181,106,0.14);padding:14px 16px;" onclick="selectTransferWallet('to','Exchange')">Exchange</div>
+                        <div class="dropdown-item" style="color:#f5f1e8;padding:14px 16px;" onclick="selectTransferWallet('to','Perpetual')">Perpetual</div>
                     </div>
                 </div>
 
@@ -1344,10 +1343,10 @@
                         <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;">CURRENCY</div>
                         <span style="font-size:12px;color:#9ca3af;">Available: <span id="transfer-avail-bal" style="color:#8b5cf6;font-weight:600;">0</span></span>
                     </div>
-                    <div onclick="openCurrencyPicker()" style="background:#fff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                    <div onclick="openCurrencyPicker()" style="background:#11100e;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.35);">
                         <div style="display:flex;align-items:center;gap:10px;">
                             <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" style="width:28px;height:28px;border-radius:50%;">
-                            <span id="selected-currency-label" style="color:#1a1a2e;font-size:15px;font-weight:600;">USDT</span>
+                            <span id="selected-currency-label" style="color:#f5f1e8;font-size:15px;font-weight:600;">USDT</span>
                         </div>
                         <i class="fa-solid fa-chevron-down" style="color:#9ca3af;font-size:12px;"></i>
                     </div>
@@ -1355,25 +1354,25 @@
 
                 <!-- Currency Picker Bottom Sheet -->
                 <div id="currency-picker-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;" onclick="closeCurrencyPicker()">
-                    <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:0;max-height:60vh;overflow-y:auto;" onclick="event.stopPropagation()">
-                        <div style="padding:16px 20px;border-bottom:1px solid #f5f5ff;display:flex;justify-content:space-between;align-items:center;">
-                            <span style="font-size:16px;font-weight:700;color:#1a1a2e;">Select Currency</span>
+                    <div style="position:absolute;bottom:0;left:0;right:0;background:#11100e;border-radius:20px 20px 0 0;padding:0;max-height:60vh;overflow-y:auto;" onclick="event.stopPropagation()">
+                        <div style="padding:16px 20px;border-bottom:1px solid rgba(214,181,106,0.14);display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:16px;font-weight:700;color:#f5f1e8;">Select Currency</span>
                             <i class="fa-solid fa-xmark" style="color:#9ca3af;font-size:18px;cursor:pointer;" onclick="closeCurrencyPicker()"></i>
                         </div>
-                        <div onclick="selectCurrency('USDT')" style="padding:16px 20px;font-size:15px;color:#1a1a2e;border-bottom:1px solid #f5f5ff;cursor:pointer;font-weight:500;">USDT</div>
-                        <div onclick="selectCurrency('ETH')" style="padding:16px 20px;font-size:15px;color:#1a1a2e;border-bottom:1px solid #f5f5ff;cursor:pointer;font-weight:500;">ETH</div>
-                        <div onclick="selectCurrency('BTC')" style="padding:16px 20px;font-size:15px;color:#1a1a2e;border-bottom:1px solid #f5f5ff;cursor:pointer;font-weight:500;">BTC</div>
-                        <div onclick="selectCurrency('USDC')" style="padding:16px 20px;font-size:15px;color:#1a1a2e;border-bottom:1px solid #f5f5ff;cursor:pointer;font-weight:500;">USDC</div>
-                        <div onclick="selectCurrency('DAI')" style="padding:16px 20px;font-size:15px;color:#1a1a2e;cursor:pointer;font-weight:500;">DAI</div>
+                        <div onclick="selectCurrency('USDT')" style="padding:16px 20px;font-size:15px;color:#f5f1e8;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;font-weight:500;">USDT</div>
+                        <div onclick="selectCurrency('ETH')" style="padding:16px 20px;font-size:15px;color:#f5f1e8;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;font-weight:500;">ETH</div>
+                        <div onclick="selectCurrency('BTC')" style="padding:16px 20px;font-size:15px;color:#f5f1e8;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;font-weight:500;">BTC</div>
+                        <div onclick="selectCurrency('USDC')" style="padding:16px 20px;font-size:15px;color:#f5f1e8;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;font-weight:500;">USDC</div>
+                        <div onclick="selectCurrency('DAI')" style="padding:16px 20px;font-size:15px;color:#f5f1e8;cursor:pointer;font-weight:500;">DAI</div>
                     </div>
                 </div>
 
                 <!-- Amount -->
                 <div style="margin-bottom:24px;">
                     <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">AMOUNT</div>
-                    <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
+                    <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
                         <i class="fa-solid fa-coins" style="color:#8b5cf6;font-size:15px;"></i>
-                        <input type="number" id="transfer-amount" placeholder="e.g. 100.50" step="0.01" min="0.01" inputmode="decimal" style="background:none;border:none;color:#1a1a2e;font-size:15px;width:100%;outline:none;">
+                        <input type="number" id="transfer-amount" placeholder="e.g. 100.50" step="0.01" min="0.01" inputmode="decimal" style="background:none;border:none;color:#f5f1e8;font-size:15px;width:100%;outline:none;">
                         <span onclick="setTransferAll()" style="color:#8b5cf6;font-size:13px;font-weight:700;cursor:pointer;background:rgba(139,92,246,0.1);padding:4px 10px;border-radius:8px;white-space:nowrap;">All</span>
                     </div>
                 </div>
@@ -1468,7 +1467,7 @@
             <!-- ══ LOGO SECTION (centered at top) ══ -->
             <div style="text-align:center;padding:48px 24px 28px;">
                 <img src="/netrontrade-logo.svg" style="width:90px;height:90px;object-fit:cover;border-radius:50%;filter:drop-shadow(0 6px 20px rgba(214,181,106,0.25));margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;">
-                <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:1px;margin-bottom:4px;">NETRONTRADE</div>
+                <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:1px;margin-bottom:4px;">NEOTRADE</div>
                 <div style="font-size:12px;color:rgba(255,255,255,0.4);letter-spacing:0.5px;">Premium Digital Asset Platform</div>
             </div>
 
@@ -1487,7 +1486,6 @@
                             autocomplete="off">
                     </div>
                 </div>
-                <div id="login-mobile-group" style="display:none;"></div>
 
                 <!-- Password -->
                 <div style="margin-bottom:20px;">
@@ -1581,7 +1579,7 @@
                     <i class="fa-solid fa-key" style="color:#fff;font-size:26px;"></i>
                 </div>
                 <h1 style="font-size:30px;font-weight:800;color:#fff;margin-bottom:8px;letter-spacing:-0.5px;">Forgot Password?</h1>
-                <p style="font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:32px;line-height:1.6;">Enter your email address and we'll generate a reset token for you.</p>
+                <p style="font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:32px;line-height:1.6;">Enter your registered email address and we'll send you a reset code.</p>
 
                 <!-- Step 1: Email -->
                 <div id="forgot-step1">
@@ -1593,21 +1591,21 @@
                         </div>
                     </div>
                     <button onclick="doForgotPassword()" style="width:100%;padding:16px;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;box-shadow:0 6px 24px rgba(139,92,246,0.4);">
-                        Get Reset Token
+                        Send Reset Code
                     </button>
                 </div>
 
                 <!-- Step 2: Reset -->
                 <div id="forgot-step2" style="display:none;">
                     <div style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.3);border-radius:14px;padding:16px;margin-bottom:20px;">
-                        <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;">Your Reset Token:</p>
-                        <p id="forgot-token-display" style="font-size:13px;color:#a78bfa;font-weight:600;word-break:break-all;font-family:monospace;"></p>
+                        <p style="font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:6px;">If this email is registered, a reset code was sent to:</p>
+                        <p id="forgot-token-display" style="font-size:13px;color:#a78bfa;font-weight:600;word-break:break-all;"></p>
                     </div>
                     <div style="margin-bottom:14px;">
-                        <label style="font-size:12px;color:rgba(255,255,255,0.5);font-weight:500;letter-spacing:0.5px;display:block;margin-bottom:8px;">RESET TOKEN</label>
+                        <label style="font-size:12px;color:rgba(255,255,255,0.5);font-weight:500;letter-spacing:0.5px;display:block;margin-bottom:8px;">RESET CODE</label>
                         <div style="display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:14px;padding:14px 18px;gap:12px;">
                             <i class="fa-solid fa-key" style="color:#8b5cf6;font-size:15px;flex-shrink:0;"></i>
-                            <input type="text" placeholder="Paste token here" id="reset-token-input" style="background:none;border:none;color:#fff;font-size:14px;width:100%;outline:none;">
+                            <input type="text" placeholder="Enter the code from your email" id="reset-token-input" style="background:none;border:none;color:#fff;font-size:14px;width:100%;outline:none;">
                         </div>
                     </div>
                     <div style="margin-bottom:20px;">
@@ -1640,38 +1638,13 @@
             <div style="padding:28px 24px 0;">
                 <p style="font-size:13px;font-weight:500;color:#8b5cf6;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;">Get started</p>
                 <h1 style="font-size:34px;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:-0.5px;">Create Account</h1>
-                <p style="font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:28px;">Join NETRONTRADE</p>
+                <p style="font-size:14px;color:rgba(255,255,255,0.45);margin-bottom:28px;">Join NEOTRADE</p>
 
                 <!-- Email input -->
                 <div style="margin-bottom:14px;">
                     <div style="display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:14px;padding:0 18px;gap:12px;height:52px;">
                         <i class="fa-regular fa-envelope" style="color:#8b5cf6;font-size:15px;flex-shrink:0;"></i>
                         <input type="email" placeholder="Email address" id="reg-email" style="background:none;border:none;color:#fff;font-size:15px;width:100%;outline:none;height:100%;" autocomplete="email">
-                    </div>
-                </div>
-
-                <!-- Phone Number -->
-                <div style="margin-bottom:14px;">
-                    <div style="display:flex;align-items:center;background:rgba(255,255,255,0.06);border:1px solid rgba(139,92,246,0.2);border-radius:14px;padding:0 14px;gap:8px;height:52px;">
-                        <i class="fa-solid fa-phone" style="color:#8b5cf6;font-size:14px;flex-shrink:0;"></i>
-                        <!-- Country code selector -->
-                        <div onclick="openRegCountryPicker()" style="display:flex;align-items:center;gap:5px;cursor:pointer;padding-right:10px;border-right:1px solid rgba(255,255,255,0.12);flex-shrink:0;">
-                            <span id="reg-flag" style="font-size:18px;">🇵🇰</span>
-                            <span id="reg-dial-code" style="color:#fff;font-size:14px;font-weight:600;">+92</span>
-                            <i class="fa-solid fa-chevron-down" style="color:rgba(255,255,255,0.4);font-size:10px;"></i>
-                        </div>
-                        <input type="tel" placeholder="Mobile number" id="reg-phone" style="background:none;border:none;color:#fff;font-size:15px;width:100%;outline:none;height:100%;" autocomplete="tel" inputmode="numeric">
-                    </div>
-                </div>
-
-                <!-- Country Picker Modal -->
-                <div id="reg-country-modal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);" onclick="closeRegCountryPicker()">
-                    <div onclick="event.stopPropagation()" style="position:fixed;bottom:0;left:0;right:0;max-width:480px;margin:0 auto;background:#1a1d3a;border-radius:22px 22px 0 0;max-height:75vh;overflow-y:auto;">
-                        <div style="padding:16px 20px;border-bottom:1px solid rgba(255,255,255,0.08);display:flex;justify-content:space-between;align-items:center;">
-                            <span style="font-size:16px;font-weight:700;color:#fff;">Select Country</span>
-                            <i class="fa-solid fa-xmark" onclick="closeRegCountryPicker()" style="color:#9ca3af;font-size:18px;cursor:pointer;"></i>
-                        </div>
-                        <div style="padding:10px 20px 30px;" id="reg-country-list"></div>
                     </div>
                 </div>
 
@@ -1683,7 +1656,7 @@
                             <i class="fa-solid fa-shield-halved" style="color:#8b5cf6;font-size:15px;flex-shrink:0;"></i>
                             <input type="text" placeholder="Enter code" id="reg-code" style="background:none;border:none;color:#fff;font-size:15px;width:100%;outline:none;">
                         </div>
-                        <button id="otp-btn" onclick="showCaptchaModal()" style="padding:0 18px;border:1px solid rgba(139,92,246,0.4);border-radius:14px;background:rgba(139,92,246,0.1);color:#a78bfa;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Send</button>
+                        <button id="otp-btn" onclick="showCaptchaModal()" style="padding:0 18px;border:1px solid rgba(214,181,106,0.4);border-radius:14px;background:rgba(214,181,106,0.1);color:#f1d78b;font-size:13px;font-weight:600;cursor:pointer;white-space:nowrap;">Send</button>
                     </div>
                 </div>
 
@@ -1729,7 +1702,7 @@
         <!-- ═══════════════════════════════════════════════════════
      TRANSACTION HISTORY SCREEN
 ════════════════════════════════════════════════════════ -->
-        <div id="transaction-screen" class="screen" style="background:#f5f5ff;">
+        <div id="transaction-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Transaction History</h2>
@@ -1753,7 +1726,7 @@
                 <div id="refPageAnnouncement" style="display:none; background:rgba(139,92,246,0.1); border:1px solid rgba(139,92,246,0.3); border-radius:12px; padding:12px; margin-bottom:16px; color:#8b5cf6; font-size:13px; font-weight:600; text-align:center;"></div>
 
                 <!-- Hero: earnings + share link -->
-                <div id="refPageBanner" style="background:linear-gradient(135deg, #6d28d9, var(--primary)); background-size: cover; background-position: center; border:1px solid rgba(255,255,255,0.12); border-radius:22px; padding:22px; position:relative; overflow:hidden; box-shadow: 0 10px 30px 0 rgba(0,0,0,0.25);">
+                <div id="refPageBanner" style="background:linear-gradient(135deg, #2a2214 0%, #11100e 60%, #0a0908 100%); background-size: cover; background-position: center; border:1px solid rgba(214,181,106,0.35); border-radius:22px; padding:22px; position:relative; overflow:hidden; box-shadow: 0 10px 30px 0 rgba(0,0,0,0.25);">
                     <div style="position:absolute; top:-60px; right:-60px; width:170px; height:170px; background:radial-gradient(circle, rgba(255,255,255,0.35) 0%, transparent 70%); filter:blur(18px);"></div>
                     <div style="position:absolute; bottom:-40px; left:-40px; width:120px; height:120px; background:radial-gradient(circle, rgba(0,0,0,0.15) 0%, transparent 70%); filter:blur(16px);"></div>
 
@@ -2000,7 +1973,7 @@
         </div>
 
         <!-- SUPPORT SCREEN -->
-        <div id="support-screen" class="screen" style="background:#f5f5ff;">
+        <div id="support-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Support Center</h2>
@@ -2008,70 +1981,70 @@
             </div>
 
             <!-- Search Bar -->
-            <div style="margin:0 14px 12px;background:#fff;border:1.5px solid rgba(139,92,246,0.15);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+            <div style="margin:0 14px 12px;background:#11100e;border:1.5px solid rgba(139,92,246,0.15);border-radius:14px;padding:12px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,0.35);">
                 <i class="fa-solid fa-magnifying-glass" style="color:#9ca3af;font-size:14px;"></i>
-                <input type="text" placeholder="Search articles..." style="border:none;background:transparent;font-size:14px;color:#1a1a2e;width:100%;outline:none;">
+                <input type="text" placeholder="Search articles..." style="border:none;background:transparent;font-size:14px;color:#f5f1e8;width:100%;outline:none;">
             </div>
 
             <!-- FAQ Section -->
-            <div style="margin:0 14px;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-                <div style="padding:14px 16px 10px;border-bottom:1px solid #f5f5ff;">
-                    <span style="font-size:14px;font-weight:700;color:#1a1a2e;">Frequently Asked Questions</span>
+            <div style="margin:0 14px;background:#11100e;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
+                <div style="padding:14px 16px 10px;border-bottom:1px solid rgba(214,181,106,0.14);">
+                    <span style="font-size:14px;font-weight:700;color:#f5f1e8;">Frequently Asked Questions</span>
                 </div>
 
-                <div onclick="openFaq(0)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="openFaq(0)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-circle-question" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">About official accounts and demo accounts</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">About official accounts and demo accounts</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
 
-                <div onclick="openFaq(1)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="openFaq(1)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-circle-question" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">What is transaction volume?</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">What is transaction volume?</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
 
-                <div onclick="openFaq(2)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="openFaq(2)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-circle-question" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Why do we need to transfer funds?</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Why do we need to transfer funds?</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
 
-                <div onclick="openFaq(3)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="openFaq(3)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-circle-question" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">What are futures?</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">What are futures?</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
 
-                <div onclick="openFaq(4)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="openFaq(4)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-circle-question" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Why does asset value change after conversion?</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Why does asset value change after conversion?</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
 
-                <div onclick="openFaq(5)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="openFaq(5)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-circle-question" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Why do we need real-name authentication?</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Why do we need real-name authentication?</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
 
-                <div onclick="openFaq(6)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="openFaq(6)" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-circle-question" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">What is frozen assets?</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">What is frozen assets?</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
 
@@ -2079,7 +2052,7 @@
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-circle-question" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">What are the rules of futures trading?</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">What are the rules of futures trading?</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
             </div>
@@ -2089,7 +2062,7 @@
         <!-- FAQ DETAIL SCREEN -->
         <div id="faq-detail-screen" class="screen">
             <div class="sub-header"
-                style="justify-content:center; position:relative; box-shadow:none; border-bottom:1px solid #f0f0f0;">
+                style="justify-content:center; position:relative; box-shadow:none; border-bottom:1px solid rgba(214,181,106,0.14);">
                 <i class="fa-solid fa-chevron-left back-btn" onclick="navTo('support-screen')"
                     style="position:absolute; left:20px; top:50%; transform:translateY(-50%); font-size:16px;"></i>
                 <h2 style="font-size:16px; font-weight:700;">Support center</h2>
@@ -2101,7 +2074,7 @@
                 <h3 id="faq-detail-title"
                     style="font-size:20px; font-weight:700; color:var(--text-primary); margin-bottom:20px; line-height:1.4;">
                     About official accounts and demo accounts</h3>
-                <div id="faq-detail-body" style="font-size:15px; color:#666; line-height:1.5;">
+                <div id="faq-detail-body" style="font-size:15px; color:#a9a49a; line-height:1.5;">
                     A full account can use all the online features of the platform, a demo account can only use some of
                     the platform's features in a limited way, and cannot use liquidity mining for revenue, as well as
                     the ability to charge and withdraw coins. (Demo accounts can receive fixed virtual funds once a
@@ -2157,32 +2130,32 @@
         </script>
 
         <!-- ABOUT SCREEN -->
-        <div id="about-screen" class="screen" style="background:#f5f5ff;">
+        <div id="about-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></div>
-                <h2>About NETRONTRADE</h2>
+                <h2>About NEOTRADE</h2>
                 <span style="width:32px;"></span>
             </div>
 
             <!-- Brand Hero Card -->
             <div style="margin:12px 14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:20px;padding:28px 24px;text-align:center;box-shadow:0 6px 20px rgba(139,92,246,0.35);">
                 <img src="/netrontrade-logo.svg" style="width:84px;height:84px;object-fit:cover;border-radius:50%;filter:drop-shadow(0 6px 20px rgba(214,181,106,0.25));margin:0 auto 14px;display:block;">
-                <div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:4px;">NETRONTRADE</div>
+                <div style="font-size:28px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:4px;">NEOTRADE</div>
                 <div style="font-size:13px;color:rgba(255,255,255,0.7);">Premium Digital Asset Platform</div>
             </div>
 
             <!-- Stats Row -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.05);display:flex;justify-content:space-around;">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,0.35);display:flex;justify-content:space-around;">
                 <div style="text-align:center;">
                     <div style="font-size:20px;font-weight:800;color:#8b5cf6;">40+</div>
                     <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Digital Assets</div>
                 </div>
-                <div style="width:1px;background:#f0f0f8;"></div>
+                <div style="width:1px;background:#1a1814;"></div>
                 <div style="text-align:center;">
                     <div style="font-size:20px;font-weight:800;color:#8b5cf6;">130+</div>
                     <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Countries</div>
                 </div>
-                <div style="width:1px;background:#f0f0f8;"></div>
+                <div style="width:1px;background:#1a1814;"></div>
                 <div style="text-align:center;">
                     <div style="font-size:20px;font-weight:800;color:#8b5cf6;">1M+</div>
                     <div style="font-size:11px;color:#9ca3af;margin-top:2px;">Users</div>
@@ -2190,24 +2163,24 @@
             </div>
 
             <!-- About Text -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
                     <div style="width:4px;height:20px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:15px;font-weight:700;color:#1a1a2e;">Our Story</span>
+                    <span style="font-size:15px;font-weight:700;color:#f5f1e8;">Our Story</span>
                 </div>
                 <p style="font-size:14px;color:#6b7280;line-height:1.8;margin:0;">
-                    NETRONTRADE is a premium digital asset platform serving professional traders worldwide, focused on precise execution and secure asset management.
+                    NEOTRADE is a premium digital asset platform serving professional traders worldwide, focused on precise execution and secure asset management.
                 </p>
                 <p style="font-size:14px;color:#6b7280;line-height:1.8;margin:12px 0 0;">
-                    NETRONTRADE provides modern blockchain asset services through a refined, security-focused experience for digital asset users.
+                    NEOTRADE provides modern blockchain asset services through a refined, security-focused experience for digital asset users.
                 </p>
             </div>
 
             <!-- Key Features -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
                     <div style="width:4px;height:20px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:15px;font-weight:700;color:#1a1a2e;">Why Choose NETRONTRADE</span>
+                    <span style="font-size:15px;font-weight:700;color:#f5f1e8;">Why Choose NEOTRADE</span>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:12px;">
                     <div style="display:flex;align-items:center;gap:12px;">
@@ -2215,7 +2188,7 @@
                             <i class="fa-solid fa-shield-halved" style="color:#8b5cf6;font-size:15px;"></i>
                         </div>
                         <div>
-                            <div style="font-size:13px;font-weight:600;color:#1a1a2e;">Industry-Leading Security</div>
+                            <div style="font-size:13px;font-weight:600;color:#f5f1e8;">Industry-Leading Security</div>
                             <div style="font-size:12px;color:#9ca3af;margin-top:2px;">Multi-layer protection for your assets</div>
                         </div>
                     </div>
@@ -2224,7 +2197,7 @@
                             <i class="fa-solid fa-bolt" style="color:#10b981;font-size:15px;"></i>
                         </div>
                         <div>
-                            <div style="font-size:13px;font-weight:600;color:#1a1a2e;">Lightning Fast Execution</div>
+                            <div style="font-size:13px;font-weight:600;color:#f5f1e8;">Lightning Fast Execution</div>
                             <div style="font-size:12px;color:#9ca3af;margin-top:2px;">Millisecond order processing</div>
                         </div>
                     </div>
@@ -2233,7 +2206,7 @@
                             <i class="fa-solid fa-globe" style="color:#3b82f6;font-size:15px;"></i>
                         </div>
                         <div>
-                            <div style="font-size:13px;font-weight:600;color:#1a1a2e;">Global Presence</div>
+                            <div style="font-size:13px;font-weight:600;color:#f5f1e8;">Global Presence</div>
                             <div style="font-size:12px;color:#9ca3af;margin-top:2px;">Offices in Singapore, South Korea, Hong Kong</div>
                         </div>
                     </div>
@@ -2252,46 +2225,46 @@
 
             <!-- Account Settings Group -->
             <div style="padding:8px 0 4px 16px;font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:1px;text-transform:uppercase;">Account</div>
-            <div style="background:#fff;margin:0 14px 10px;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-                <div onclick="navTo('change-password-screen')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+            <div style="background:#11100e;margin:0 14px 10px;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
+                <div onclick="navTo('change-password-screen')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-lock" style="color:#8b5cf6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Change Password</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Change Password</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
-                <div onclick="navTo('bind-address-screen')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="navTo('bind-address-screen')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-wallet" style="color:#f59e0b;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Bind Withdrawal Address</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Bind Withdrawal Address</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
                 <div onclick="navTo('google-auth-screen')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-brands fa-google" style="color:#3b82f6;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Google Authenticator</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Google Authenticator</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
             </div>
 
             <!-- Preferences Group -->
             <div style="padding:8px 0 4px 16px;font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:1px;text-transform:uppercase;">Preferences</div>
-            <div style="background:#fff;margin:0 14px 10px;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-                <div onclick="showToast('Language: English')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+            <div style="background:#11100e;margin:0 14px 10px;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
+                <div onclick="showToast('Language: English')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(16,185,129,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-globe" style="color:#10b981;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Language</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Language</span>
                     <span style="font-size:13px;color:#9ca3af;margin-right:6px;">English</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
-                <div onclick="showToast('Currency: USD')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid #f5f5ff;cursor:pointer;">
+                <div onclick="showToast('Currency: USD')" style="display:flex;align-items:center;gap:12px;padding:14px 16px;border-bottom:1px solid rgba(214,181,106,0.14);cursor:pointer;">
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(245,158,11,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-dollar-sign" style="color:#f59e0b;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Denomination Currency</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Denomination Currency</span>
                     <span style="font-size:13px;color:#9ca3af;margin-right:6px;">USD</span>
                     <i class="fa-solid fa-chevron-right" style="color:#d1d5db;font-size:12px;"></i>
                 </div>
@@ -2299,7 +2272,7 @@
                     <div style="width:34px;height:34px;border-radius:10px;background:rgba(107,114,128,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         <i class="fa-solid fa-code-branch" style="color:#6b7280;font-size:15px;"></i>
                     </div>
-                    <span style="flex:1;font-size:14px;font-weight:500;color:#1a1a2e;">Version</span>
+                    <span style="flex:1;font-size:14px;font-weight:500;color:#f5f1e8;">Version</span>
                     <span style="font-size:13px;color:#9ca3af;">2.0.4</span>
                 </div>
             </div>
@@ -2359,7 +2332,7 @@
         </div>
 
         <!-- CHANGE PASSWORD SCREEN -->
-        <div id="change-password-screen" class="screen" style="background:#f5f5ff;">
+        <div id="change-password-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('settings-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Change Password</h2>
@@ -2375,29 +2348,29 @@
                     <div style="font-size:13px;color:#9ca3af;">Keep your account secure with a strong password</div>
                 </div>
 
-                <div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                <div style="background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                     <!-- Old Password -->
                     <div style="margin-bottom:14px;">
                         <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">CURRENT PASSWORD</div>
-                        <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
+                        <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
                             <i class="fa-solid fa-lock-open" style="color:#8b5cf6;font-size:15px;"></i>
-                            <input type="password" id="cp-old" placeholder="Enter current password" style="background:none;border:none;color:#1a1a2e;font-size:15px;width:100%;outline:none;">
+                            <input type="password" id="cp-old" placeholder="Enter current password" style="background:none;border:none;color:#f5f1e8;font-size:15px;width:100%;outline:none;">
                         </div>
                     </div>
                     <!-- New Password -->
                     <div style="margin-bottom:14px;">
                         <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">NEW PASSWORD</div>
-                        <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
+                        <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
                             <i class="fa-solid fa-key" style="color:#8b5cf6;font-size:15px;"></i>
-                            <input type="password" id="cp-new" placeholder="Enter new password" style="background:none;border:none;color:#1a1a2e;font-size:15px;width:100%;outline:none;">
+                            <input type="password" id="cp-new" placeholder="Enter new password" style="background:none;border:none;color:#f5f1e8;font-size:15px;width:100%;outline:none;">
                         </div>
                     </div>
                     <!-- Confirm Password -->
                     <div style="margin-bottom:24px;">
                         <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">CONFIRM NEW PASSWORD</div>
-                        <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
+                        <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
                             <i class="fa-solid fa-lock" style="color:#8b5cf6;font-size:15px;"></i>
-                            <input type="password" id="cp-confirm" placeholder="Confirm new password" style="background:none;border:none;color:#1a1a2e;font-size:15px;width:100%;outline:none;">
+                            <input type="password" id="cp-confirm" placeholder="Confirm new password" style="background:none;border:none;color:#f5f1e8;font-size:15px;width:100%;outline:none;">
                         </div>
                     </div>
                     <button onclick="doChangePassword()" style="width:100%;padding:15px;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;box-shadow:0 4px 16px rgba(139,92,246,0.35);">
@@ -2408,7 +2381,7 @@
         </div>
 
         <!-- BIND ADDRESS SCREEN -->
-        <div id="bind-address-screen" class="screen" style="background:#f5f5ff;">
+        <div id="bind-address-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('settings-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Bind Withdrawal Address</h2>
@@ -2417,11 +2390,11 @@
 
             <div style="padding:16px;">
                 <!-- Coin Row -->
-                <div style="background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                <div style="background:#11100e;border-radius:16px;padding:16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                     <div style="display:flex;align-items:center;gap:12px;">
                         <img src="https://cryptologos.cc/logos/tether-usdt-logo.png" style="width:40px;height:40px;border-radius:50%;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
                         <div>
-                            <div style="font-size:16px;font-weight:700;color:#1a1a2e;">USDT</div>
+                            <div style="font-size:16px;font-weight:700;color:#f5f1e8;">USDT</div>
                             <div style="font-size:11px;color:#9ca3af;">Tether</div>
                         </div>
                     </div>
@@ -2431,18 +2404,18 @@
                 </div>
 
                 <!-- Freeze warning -->
-                <div id="bind-freeze-banner" style="display:none;background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:#92400e;display:flex;align-items:center;gap:8px;">
+                <div id="bind-freeze-banner" style="display:none;background:rgba(245,158,11,0.10);border:1.5px solid rgba(214,181,106,0.14);border-radius:14px;padding:12px 16px;margin-bottom:12px;font-size:13px;color:#f5b041;display:flex;align-items:center;gap:8px;">
                     <i class="fa-solid fa-clock" style="color:#f59e0b;"></i>
                     <span id="bind-freeze-text">Withdrawals frozen for 24 hours after unbinding.</span>
                 </div>
 
                 <!-- Already bound state -->
                 <div id="bind-addr-bound-state" style="display:none;">
-                    <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                    <div style="background:#11100e;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                         <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">BOUND ADDRESS</div>
-                        <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.15);border-radius:12px;padding:14px;display:flex;align-items:flex-start;gap:10px;">
+                        <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.15);border-radius:12px;padding:14px;display:flex;align-items:flex-start;gap:10px;">
                             <i class="fa-solid fa-wallet" style="color:#8b5cf6;font-size:15px;margin-top:2px;flex-shrink:0;"></i>
-                            <span id="bind-addr-display" style="font-size:13px;font-weight:600;word-break:break-all;flex:1;color:#1a1a2e;"></span>
+                            <span id="bind-addr-display" style="font-size:13px;font-weight:600;word-break:break-all;flex:1;color:#f5f1e8;"></span>
                             <i class="fa-regular fa-copy" style="color:#8b5cf6;cursor:pointer;flex-shrink:0;" onclick="copyText(document.getElementById('bind-addr-display').textContent)"></i>
                         </div>
                         <div style="margin-top:10px;font-size:12px;color:#6b7280;">Chain: <span id="bind-chain-display" style="color:#8b5cf6;font-weight:700;"></span></div>
@@ -2450,7 +2423,7 @@
                     <button onclick="doUnbindAddress()" style="width:100%;padding:15px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#dc2626,#ef4444);color:#fff;box-shadow:0 4px 14px rgba(220,38,38,0.3);margin-bottom:12px;">
                         <i class="fa-solid fa-link-slash" style="margin-right:8px;"></i>Unbind Address
                     </button>
-                    <div style="background:#fffbeb;border:1.5px solid #fde68a;border-radius:14px;padding:12px 16px;font-size:12px;color:#92400e;text-align:center;">
+                    <div style="background:rgba(245,158,11,0.10);border:1.5px solid rgba(214,181,106,0.14);border-radius:14px;padding:12px 16px;font-size:12px;color:#f5b041;text-align:center;">
                         <i class="fa-solid fa-triangle-exclamation" style="color:#f59e0b;margin-right:6px;"></i>
                         Unbinding will freeze withdrawals for 24 hours.
                     </div>
@@ -2458,16 +2431,16 @@
 
                 <!-- Unbound state (bind form) -->
                 <div id="bind-addr-form-state">
-                    <div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                    <div style="background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                         <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">SELECT CHAIN TYPE</div>
                         <div style="display:flex;gap:10px;margin-bottom:20px;">
                             <button class="chain-type-btn active" id="chain-trc20" onclick="selectChainType('TRC20')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid #8b5cf6;background:rgba(139,92,246,0.08);color:#7c3aed;font-size:13px;font-weight:700;cursor:pointer;">TRC20</button>
-                            <button class="chain-type-btn" id="chain-erc20" onclick="selectChainType('ERC20')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid #e0e0f0;background:#fff;color:#9ca3af;font-size:13px;font-weight:600;cursor:pointer;">ERC20</button>
+                            <button class="chain-type-btn" id="chain-erc20" onclick="selectChainType('ERC20')" style="flex:1;padding:10px;border-radius:12px;border:1.5px solid rgba(214,181,106,0.14);background:#11100e;color:#9ca3af;font-size:13px;font-weight:600;cursor:pointer;">ERC20</button>
                         </div>
                         <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">WALLET ADDRESS</div>
-                        <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;margin-bottom:24px;">
+                        <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;margin-bottom:24px;">
                             <i class="fa-solid fa-wallet" style="color:#8b5cf6;font-size:15px;"></i>
-                            <input type="text" id="bind-addr-input" placeholder="Enter wallet address" style="background:none;border:none;color:#1a1a2e;font-size:15px;width:100%;outline:none;">
+                            <input type="text" id="bind-addr-input" placeholder="Enter wallet address" style="background:none;border:none;color:#f5f1e8;font-size:15px;width:100%;outline:none;">
                         </div>
                         <button onclick="doBindAddress()" style="width:100%;padding:15px;border:none;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;box-shadow:0 4px 16px rgba(139,92,246,0.35);">
                             <i class="fa-solid fa-link" style="margin-right:8px;"></i>Bind Address
@@ -2493,7 +2466,7 @@
         </div>
 
         <!-- GOOGLE AUTH SCREEN -->
-        <div id="google-auth-screen" class="screen" style="background:#f5f5ff;">
+        <div id="google-auth-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('settings-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Google 2FA</h2>
@@ -2502,7 +2475,7 @@
 
             <div style="padding:16px;">
                 <!-- Already enabled badge -->
-                <div id="google-auth-enabled-badge" style="display:none;background:#f0fdf4;border:1.5px solid #86efac;border-radius:14px;padding:14px 16px;margin-bottom:12px;align-items:center;gap:10px;">
+                <div id="google-auth-enabled-badge" style="display:none;background:rgba(16,185,129,0.10);border:1.5px solid #86efac;border-radius:14px;padding:14px 16px;margin-bottom:12px;align-items:center;gap:10px;">
                     <i class="fa-solid fa-circle-check" style="color:#16a34a;font-size:20px;"></i>
                     <span style="font-size:14px;font-weight:700;color:#16a34a;flex:1;">Google Authenticator is Active</span>
                 </div>
@@ -2510,42 +2483,42 @@
                 <!-- Shown when already enabled — re-binding a new authenticator
                      requires confirming the account password first, so a stolen
                      session alone can't silently swap out someone's 2FA. -->
-                <div id="google-auth-remove-card" style="display:none;background:#fff;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                <div id="google-auth-remove-card" style="display:none;background:#11100e;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                     <div style="font-size:13px;color:#6b7280;margin-bottom:16px;">To change or remove your authenticator, confirm your account password first.</div>
-                    <button onclick="promptDisable2fa()" style="width:100%;padding:14px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;background:#fef2f2;color:#dc2626;">
+                    <button onclick="promptDisable2fa()" style="width:100%;padding:14px;border:none;border-radius:14px;font-size:15px;font-weight:700;cursor:pointer;background:rgba(239,68,68,0.10);color:#dc2626;">
                         <i class="fa-solid fa-trash-can" style="margin-right:8px;"></i>Remove / Change Authenticator
                     </button>
                 </div>
 
                 <!-- Step 1: QR Code Card -->
                 <div id="google-auth-setup-form">
-                <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                <div style="background:#11100e;border-radius:16px;padding:20px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
                         <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">1</div>
-                        <span style="font-size:13px;font-weight:600;color:#1a1a2e;">Scan QR code with Google Authenticator</span>
+                        <span style="font-size:13px;font-weight:600;color:#f5f1e8;">Scan QR code with Google Authenticator</span>
                     </div>
                     <div style="display:flex;justify-content:center;margin-bottom:16px;">
-                        <div style="width:170px;height:170px;background:linear-gradient(135deg,#f8f5ff,#ede9ff);border-radius:20px;display:flex;align-items:center;justify-content:center;border:2px solid rgba(139,92,246,0.15);box-shadow:0 4px 20px rgba(139,92,246,0.12);overflow:hidden;">
+                        <div style="width:170px;height:170px;background:linear-gradient(135deg,#1a1814,#1a1814);border-radius:20px;display:flex;align-items:center;justify-content:center;border:2px solid rgba(139,92,246,0.15);box-shadow:0 4px 20px rgba(139,92,246,0.12);overflow:hidden;">
                             <img id="google-auth-qr" src="" alt="QR Code" style="width:150px;height:150px;display:none;border-radius:6px;">
                             <i id="google-auth-qr-placeholder" class="fa-solid fa-spinner fa-spin" style="font-size:32px;color:#8b5cf6;"></i>
                         </div>
                     </div>
                     <div style="font-size:12px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">OR ENTER KEY MANUALLY</div>
-                    <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
-                        <span id="google-auth-key" style="font-size:13px;font-weight:700;word-break:break-all;font-family:monospace;flex:1;color:#1a1a2e;">Loading...</span>
+                    <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px;">
+                        <span id="google-auth-key" style="font-size:13px;font-weight:700;word-break:break-all;font-family:monospace;flex:1;color:#f5f1e8;">Loading...</span>
                         <i class="fa-regular fa-copy" style="cursor:pointer;color:#8b5cf6;flex-shrink:0;font-size:16px;" onclick="copyText(document.getElementById('google-auth-key').textContent)"></i>
                     </div>
                 </div>
 
                 <!-- Step 2: Enter Code Card -->
-                <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+                <div style="background:#11100e;border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
                         <div style="width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;">2</div>
-                        <span style="font-size:13px;font-weight:600;color:#1a1a2e;">Enter the 6-digit verification code</span>
+                        <span style="font-size:13px;font-weight:600;color:#f5f1e8;">Enter the 6-digit verification code</span>
                     </div>
-                    <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
+                    <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
                         <i class="fa-solid fa-shield-halved" style="color:#8b5cf6;font-size:15px;"></i>
-                        <input type="number" id="google-auth-code" placeholder="6-digit code" maxlength="6" style="background:none;border:none;color:#1a1a2e;font-size:18px;font-weight:700;width:100%;outline:none;letter-spacing:6px;">
+                        <input type="number" id="google-auth-code" placeholder="6-digit code" maxlength="6" style="background:none;border:none;color:#f5f1e8;font-size:18px;font-weight:700;width:100%;outline:none;letter-spacing:6px;">
                     </div>
                 </div>
 
@@ -2560,7 +2533,7 @@
 
 
         <!-- BASIC VERIFICATION -->
-        <div id="basic-verification-screen" class="screen" style="background:#f5f5ff;">
+        <div id="basic-verification-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Identity Verification</h2>
@@ -2585,15 +2558,15 @@
                 </div>
 
                 <div id="basic-kyc-form">
-                    <div style="background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-                        <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin-bottom:16px;">Personal Information</div>
+                    <div style="background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
+                        <div style="font-size:13px;font-weight:700;color:#f5f1e8;margin-bottom:16px;">Personal Information</div>
 
                         <!-- Country Selector -->
                         <div style="margin-bottom:14px;">
                             <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">COUNTRY OF ISSUE</div>
-                            <div onclick="openCountryModal()" style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;">
+                            <div onclick="openCountryModal()" style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;cursor:pointer;">
                                 <img src="https://flagcdn.com/w20/us.png" id="kyc-flag-img" style="width:20px;border-radius:2px;" alt="flag">
-                                <div id="kyc-country-display" style="flex:1;font-size:15px;color:#1a1a2e;font-weight:500;">United States</div>
+                                <div id="kyc-country-display" style="flex:1;font-size:15px;color:#f5f1e8;font-weight:500;">United States</div>
                                 <input type="hidden" id="kyc-country" value="United States">
                                 <i class="fa-solid fa-chevron-right" style="color:#9ca3af;font-size:12px;"></i>
                             </div>
@@ -2602,32 +2575,32 @@
                         <!-- Full Name -->
                         <div style="margin-bottom:14px;">
                             <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">FULL NAME</div>
-                            <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
+                            <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
                                 <i class="fa-solid fa-user" style="color:#8b5cf6;font-size:15px;"></i>
-                                <input type="text" id="kyc-fullname" placeholder="Enter your full name" style="background:none;border:none;color:#1a1a2e;font-size:15px;width:100%;outline:none;">
+                                <input type="text" id="kyc-fullname" placeholder="Enter your full name" style="background:none;border:none;color:#f5f1e8;font-size:15px;width:100%;outline:none;">
                             </div>
                         </div>
 
                         <!-- ID Number -->
                         <div style="margin-bottom:14px;">
                             <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">ID NUMBER</div>
-                            <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
+                            <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
                                 <i class="fa-solid fa-id-card" style="color:#8b5cf6;font-size:15px;"></i>
-                                <input type="text" id="kyc-idnumber" placeholder="Enter ID number" style="background:none;border:none;color:#1a1a2e;font-size:15px;width:100%;outline:none;">
+                                <input type="text" id="kyc-idnumber" placeholder="Enter ID number" style="background:none;border:none;color:#f5f1e8;font-size:15px;width:100%;outline:none;">
                             </div>
                         </div>
 
                         <!-- City -->
                         <div style="margin-bottom:24px;">
                             <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:8px;">CITY</div>
-                            <div style="background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
+                            <div style="background:#1a1814;border:1.5px solid rgba(139,92,246,0.2);border-radius:14px;padding:13px 16px;display:flex;align-items:center;gap:10px;">
                                 <i class="fa-solid fa-location-dot" style="color:#8b5cf6;font-size:15px;"></i>
-                                <input type="text" id="kyc-city" placeholder="Enter your city" style="background:none;border:none;color:#1a1a2e;font-size:15px;width:100%;outline:none;">
+                                <input type="text" id="kyc-city" placeholder="Enter your city" style="background:none;border:none;color:#f5f1e8;font-size:15px;width:100%;outline:none;">
                             </div>
                         </div>
 
                         <!-- Identity Documents (merged in from the old separate Advanced Verification step) -->
-                        <div style="font-size:13px;font-weight:700;color:#1a1a2e;margin:20px 0 16px;">Identity Documents</div>
+                        <div style="font-size:13px;font-weight:700;color:#f5f1e8;margin:20px 0 16px;">Identity Documents</div>
                         <div class="kyc-upload-grid">
                             <div class="kyc-upload-box" onclick="document.getElementById('kyc-selfie').click()">
                                 <div id="kyc-selfie-preview" class="kyc-upload-inner">
@@ -2672,7 +2645,7 @@
         </div>
 
         <!-- MORE SCREEN -->
-        <div id="more-screen" class="screen" style="background:#f5f5ff; min-height:100vh;">
+        <div id="more-screen" class="screen" style="background:#1a1814; min-height:100vh;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>More</h2>
@@ -2683,28 +2656,28 @@
 
                 <!-- Conventional Section -->
                 <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;padding-left:2px;">Conventional</div>
-                <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);margin-bottom:14px;">
+                <div style="background:#11100e;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.35);margin-bottom:14px;">
                     <div style="display:grid;grid-template-columns:repeat(3,1fr);">
 
-                        <div onclick="navTo('deposit-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid #f5f5ff;">
+                        <div onclick="navTo('deposit-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid rgba(214,181,106,0.14);">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-download" style="color:#10b981;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Deposit</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Deposit</span>
                         </div>
 
-                        <div onclick="navTo('withdrawal-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid #f5f5ff;">
+                        <div onclick="navTo('withdrawal-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid rgba(214,181,106,0.14);">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(239,68,68,0.12),rgba(239,68,68,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-upload" style="color:#ef4444;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Withdrawal</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Withdrawal</span>
                         </div>
 
                         <div onclick="openConvertModal()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(245,158,11,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-arrow-right-arrow-left" style="color:#f59e0b;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Convert</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Convert</span>
                         </div>
 
                     </div>
@@ -2712,28 +2685,28 @@
 
                 <!-- Trade Section -->
                 <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;padding-left:2px;">Trade</div>
-                <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);margin-bottom:14px;">
+                <div style="background:#11100e;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.35);margin-bottom:14px;">
                     <div style="display:grid;grid-template-columns:repeat(3,1fr);">
 
-                        <div onclick="navTo('perpetual-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid #f5f5ff;">
+                        <div onclick="navTo('perpetual-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid rgba(214,181,106,0.14);">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-rotate" style="color:#8b5cf6;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Perpetual</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Perpetual</span>
                         </div>
 
-                        <div onclick="navTo('futures-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid #f5f5ff;">
+                        <div onclick="navTo('futures-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid rgba(214,181,106,0.14);">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-chart-line" style="color:#3b82f6;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Futures</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Futures</span>
                         </div>
 
                         <div onclick="navTo('fund-transfer-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(16,185,129,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-shuffle" style="color:#10b981;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Transfer</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Transfer</span>
                         </div>
 
                     </div>
@@ -2741,35 +2714,35 @@
 
                 <!-- Other Section -->
                 <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;padding-left:2px;">Other</div>
-                <div style="background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.05);margin-bottom:14px;">
+                <div style="background:#11100e;border-radius:16px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,0.35);margin-bottom:14px;">
                     <div style="display:grid;grid-template-columns:repeat(3,1fr);">
 
-                        <div onclick="navTo('support-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid #f5f5ff;">
+                        <div onclick="navTo('support-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid rgba(214,181,106,0.14);">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-headset" style="color:#8b5cf6;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Help</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Help</span>
                         </div>
 
-                        <div onclick="navTo('support-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid #f5f5ff;">
+                        <div onclick="navTo('support-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;border-right:1px solid rgba(214,181,106,0.14);">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(59,130,246,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-message" style="color:#3b82f6;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Contact Us</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Contact Us</span>
                         </div>
 
                         <div onclick="navTo('about-screen')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(107,114,128,0.12),rgba(107,114,128,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-circle-info" style="color:#6b7280;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">About Us</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">About Us</span>
                         </div>
 
                         <div onclick="showLockedDaysModal()" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 10px;cursor:pointer;">
                             <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(245,158,11,0.06));display:flex;align-items:center;justify-content:center;">
                                 <i class="fa-solid fa-lock" style="color:#f59e0b;font-size:20px;"></i>
                             </div>
-                            <span style="font-size:12px;font-weight:600;color:#1a1a2e;">Locked Days</span>
+                            <span style="font-size:12px;font-weight:600;color:#f5f1e8;">Locked Days</span>
                         </div>
 
                     </div>
@@ -2779,7 +2752,7 @@
         </div>
 
         <!-- TRANSFER RECORD SCREEN -->
-        <div id="transfer-record-screen" class="screen" style="background:#f5f5ff;">
+        <div id="transfer-record-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('fund-transfer-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Transfer Records</h2>
@@ -2862,7 +2835,7 @@
         <!-- ═══════════════════════════════════════════════════════
      NOTIFICATIONS SCREEN
 ════════════════════════════════════════════════════════ -->
-        <div id="notifications-screen" class="screen" style="background:#f5f5ff;">
+        <div id="notifications-screen" class="screen" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('home-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Notifications</h2>
@@ -2915,7 +2888,7 @@
                 <input type="text" id="captcha-input" placeholder="Please enter verification code"
                     style="background:none;border:none;color:var(--text-primary);font-size:14px;padding:8px;flex:1;outline:none;width:100%;">
                 <canvas id="captcha-canvas" width="110" height="40"
-                    style="border-radius:4px;cursor:pointer;background:#e2e8f0;flex-shrink:0;"
+                    style="border-radius:4px;cursor:pointer;background:#2a2620;flex-shrink:0;"
                     onclick="drawCaptcha()"></canvas>
             </div>
             <button class="btn-green-full" style="padding:12px;font-size:15px;"
@@ -3061,7 +3034,7 @@
             <h3 style="margin-bottom:12px;font-size:18px;color:var(--text-primary);">Update Available</h3>
             <p id="app-update-text"
                 style="font-size:14px;color:var(--text-secondary);line-height:1.5;margin-bottom:24px;">
-                A new version of NETRONTRADE is available. Update now for the latest features and fixes.
+                A new version of NEOTRADE is available. Update now for the latest features and fixes.
             </p>
             <div style="display:flex;gap:12px;">
                 <button class="btn-secondary" style="flex:1;padding:12px;border-radius:8px;font-weight:600;"
@@ -3076,19 +3049,19 @@
     <div id="success-toast-modal"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:999999; background:rgba(0,0,0,0.4); align-items:center; justify-content:center;">
         <div
-            style="background:#fff; border-radius:12px; padding:30px; text-align:center; box-shadow:0 4px 24px rgba(0,0,0,0.2); min-width: 240px;">
+            style="background:#11100e; border-radius:12px; padding:30px; text-align:center; box-shadow:0 4px 24px rgba(0,0,0,0.2); min-width: 240px;">
             <div
                 style="width:70px; height:70px; background:#02c076; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; margin-bottom:18px;">
                 <i class="fa-solid fa-check" style="color:#fff; font-size:36px;"></i>
             </div>
-            <div id="success-toast-msg" style="color:#333; font-size:16px; font-weight:600;">Success</div>
+            <div id="success-toast-msg" style="color:#f5f1e8; font-size:16px; font-weight:600;">Success</div>
         </div>
     </div>
     </div><!-- #app -->
 
     <script src="https://cdn.jsdelivr.net/npm/klinecharts/dist/klinecharts.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
-    <script src="app.js?v=5"></script>
+    <script src="app.js?v=6"></script>
 
     <!-- Sound removed -->
 
@@ -3096,13 +3069,13 @@
     <div id="country-selector-modal"
         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; z-index:999999; flex-direction:column;">
         <!-- Top White Panel -->
-        <div style="background:#fff; width:100%; height:75vh; display:flex; flex-direction:column;">
+        <div style="background:#11100e; width:100%; height:75vh; display:flex; flex-direction:column;">
             <div style="padding:20px 20px 10px 20px; display:flex; align-items:center; gap:12px;">
                 <div style="flex:1; position:relative;">
                     <i class="fa-solid fa-magnifying-glass"
                         style="position:absolute; left:14px; top:14px; color:#9ca3af;"></i>
                     <input type="text" id="country-search-input" placeholder="Search"
-                        style="width:100%; padding:12px 14px 12px 40px; background:#f3f4f6; border:none; border-radius:8px; font-size:16px; outline:none; color:#374151;"
+                        style="width:100%; padding:12px 14px 12px 40px; background:#1a1814; border:none; border-radius:8px; font-size:16px; outline:none; color:#a9a49a;"
                         onkeyup="filterCountries()">
                 </div>
                 <i class="fa-solid fa-xmark" style="color:#9ca3af; font-size:22px; cursor:pointer; padding:5px;"
@@ -3139,9 +3112,9 @@
             const container = document.getElementById('country-list-container');
             if (!container) return;
             container.innerHTML = list.map(c => `
-                <div onclick="selectCountry('${c.name}', '${c.code}')" style="display:flex; align-items:center; padding:16px 0; border-bottom:1px solid #f9fafb; cursor:pointer;">
+                <div onclick="selectCountry('${c.name}', '${c.code}')" style="display:flex; align-items:center; padding:16px 0; border-bottom:1px solid rgba(214,181,106,0.14); cursor:pointer;">
                     <img src="https://flagcdn.com/w20/${c.code}.png" style="width:24px; border-radius:2px; margin-right:16px;" alt="${c.name}">
-                    <span style="font-size:16px; color:#374151;">${c.name}</span>
+                    <span style="font-size:16px; color:#a9a49a;">${c.name}</span>
                 </div>
             `).join('');
         }
@@ -3189,7 +3162,7 @@
         </div>
     </div>
         <!-- RULES & GUIDELINES SCREEN -->
-        <div id="rules-screen" class="screen full-page" style="background:#f5f5ff;">
+        <div id="rules-screen" class="screen full-page" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('assets-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Rules &amp; Guidelines</h2>
@@ -3198,31 +3171,31 @@
 
             <!-- Hero Banner -->
             <div style="margin:12px 14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:20px;padding:22px 20px;box-shadow:0 6px 20px rgba(139,92,246,0.35);">
-                <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:4px;">NETRONTRADE</div>
+                <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,0.75);margin-bottom:4px;">NEOTRADE</div>
                 <div style="font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;">Rules &amp; Guidelines</div>
                 <div style="font-size:12px;color:rgba(255,255,255,0.65);">Please read all rules carefully before trading</div>
             </div>
 
             <!-- Step Guide -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
                     <div style="width:4px;height:20px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:15px;font-weight:700;color:#1a1a2e;">Step-by-Step Guide</span>
+                    <span style="font-size:15px;font-weight:700;color:#f5f1e8;">Step-by-Step Guide</span>
                 </div>
                 <div id="rules-step-guide" style="display:flex;flex-direction:column;gap:12px;">
                     <div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">Loading...</div>
                 </div>
-                <div id="rules-telegram-note" style="display:none;margin-top:14px;background:#f8f5ff;border-radius:10px;padding:12px;border-left:3px solid #8b5cf6;">
+                <div id="rules-telegram-note" style="display:none;margin-top:14px;background:#1a1814;border-radius:10px;padding:12px;border-left:3px solid #8b5cf6;">
                     <div style="font-size:11px;font-weight:700;color:#7c3aed;letter-spacing:0.5px;margin-bottom:4px;">IMPORTANT NOTE</div>
-                    <div id="rules-important-note-text" style="font-size:13px;color:#4b5563;"></div>
+                    <div id="rules-important-note-text" style="font-size:13px;color:#a9a49a;"></div>
                 </div>
             </div>
 
             <!-- Membership Plans -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
                     <div style="width:4px;height:20px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:15px;font-weight:700;color:#1a1a2e;">Membership Plans</span>
+                    <span style="font-size:15px;font-weight:700;color:#f5f1e8;">Membership Plans</span>
                 </div>
                 <div id="rules-membership-plans" style="display:flex;flex-direction:column;gap:14px;">
                     <div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">Loading...</div>
@@ -3230,10 +3203,10 @@
             </div>
 
             <!-- Trade Time Table -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
                     <div style="width:4px;height:20px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:15px;font-weight:700;color:#1a1a2e;">Daily Trade Time Table</span>
+                    <span style="font-size:15px;font-weight:700;color:#f5f1e8;">Daily Trade Time Table</span>
                 </div>
                 <div id="rules-trade-timetable" style="overflow-x:auto;">
                     <div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">Loading...</div>
@@ -3242,10 +3215,10 @@
             </div>
 
             <!-- Shareholder Levels -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
                     <div style="width:4px;height:20px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:15px;font-weight:700;color:#1a1a2e;">Shareholder Bonus Levels</span>
+                    <span style="font-size:15px;font-weight:700;color:#f5f1e8;">Shareholder Bonus Levels</span>
                 </div>
                 <div id="rules-shareholder-levels" style="overflow-x:auto;">
                     <div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">Loading...</div>
@@ -3253,10 +3226,10 @@
             </div>
 
             <!-- Withdrawal Rules -->
-            <div style="margin:0 14px 20px;background:#fff;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 20px;background:#11100e;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
                     <div style="width:4px;height:20px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:15px;font-weight:700;color:#1a1a2e;">Withdrawal Rules</span>
+                    <span style="font-size:15px;font-weight:700;color:#f5f1e8;">Withdrawal Rules</span>
                 </div>
                 <div id="rules-withdrawal-rules" style="display:flex;flex-direction:column;gap:8px;">
                     <div style="text-align:center;padding:20px;color:#9ca3af;font-size:13px;">Loading...</div>
@@ -3265,7 +3238,7 @@
         </div>
 
         <!-- REFERRAL SCREEN -->
-        <div id="referral-screen" class="screen full-page" style="background:#f5f5ff;">
+        <div id="referral-screen" class="screen full-page" style="background:#1a1814;">
             <div class="sub-header">
                 <div class="back-btn" onclick="navTo('assets-screen')"><i class="fa-solid fa-chevron-left"></i></div>
                 <h2>Invite Friends</h2>
@@ -3280,31 +3253,31 @@
             </div>
 
             <!-- Referral Code & Link -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">MY REFERRAL CODE</div>
-                <div style="display:flex;align-items:center;justify-content:space-between;background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
-                    <span id="referral-code-display" style="font-size:18px;font-weight:800;color:#1a1a2e;font-family:monospace;letter-spacing:2px;">—</span>
+                <div style="display:flex;align-items:center;justify-content:space-between;background:#1a1814;border:1.5px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px 14px;margin-bottom:12px;">
+                    <span id="referral-code-display" style="font-size:18px;font-weight:800;color:#f5f1e8;font-family:monospace;letter-spacing:2px;">—</span>
                     <i class="fa-regular fa-copy" style="cursor:pointer;color:#8b5cf6;font-size:16px;" onclick="copyText(document.getElementById('referral-code-display').textContent)"></i>
                 </div>
                 <div style="font-size:11px;color:#9ca3af;font-weight:600;letter-spacing:0.5px;margin-bottom:10px;">MY REFERRAL LINK</div>
-                <div style="display:flex;align-items:center;gap:10px;background:#f8f5ff;border:1.5px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px 14px;">
+                <div style="display:flex;align-items:center;gap:10px;background:#1a1814;border:1.5px solid rgba(139,92,246,0.15);border-radius:12px;padding:12px 14px;">
                     <span id="referral-link-display" style="font-size:12px;color:#8b5cf6;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">—</span>
                     <i class="fa-regular fa-copy" style="cursor:pointer;color:#8b5cf6;font-size:16px;flex-shrink:0;" onclick="copyText(document.getElementById('referral-link-display').textContent)"></i>
                 </div>
             </div>
 
             <!-- Referral Stats -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
                     <div style="width:4px;height:18px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:14px;font-weight:700;color:#1a1a2e;">My Referral Stats</span>
+                    <span style="font-size:14px;font-weight:700;color:#f5f1e8;">My Referral Stats</span>
                 </div>
                 <div style="display:flex;justify-content:space-around;">
                     <div style="text-align:center;">
                         <div id="referral-count-display" style="font-size:24px;font-weight:800;color:#8b5cf6;">0</div>
                         <div style="font-size:12px;color:#9ca3af;margin-top:3px;">Total Referrals</div>
                     </div>
-                    <div style="width:1px;background:#f0f0f8;"></div>
+                    <div style="width:1px;background:#1a1814;"></div>
                     <div style="text-align:center;">
                         <div id="referral-earned-display" style="font-size:24px;font-weight:800;color:#10b981;">0.00</div>
                         <div style="font-size:12px;color:#9ca3af;margin-top:3px;">Earned (USDT)</div>
@@ -3313,44 +3286,44 @@
             </div>
 
             <!-- Referral Rules -->
-            <div style="margin:0 14px 12px;background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 12px;background:#11100e;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
                     <div style="width:4px;height:18px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:14px;font-weight:700;color:#1a1a2e;">How It Works</span>
+                    <span style="font-size:14px;font-weight:700;color:#f5f1e8;">How It Works</span>
                 </div>
                 <div style="display:flex;flex-direction:column;gap:10px;">
                     <div style="display:flex;align-items:flex-start;gap:12px;">
                         <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <span style="font-size:12px;font-weight:800;color:#8b5cf6;">1</span>
                         </div>
-                        <div style="font-size:13px;color:#4b5563;line-height:1.6;">Share your referral code or link with friends.</div>
+                        <div style="font-size:13px;color:#a9a49a;line-height:1.6;">Share your referral code or link with friends.</div>
                     </div>
                     <div style="display:flex;align-items:flex-start;gap:12px;">
                         <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <span style="font-size:12px;font-weight:800;color:#8b5cf6;">2</span>
                         </div>
-                        <div style="font-size:13px;color:#4b5563;line-height:1.6;">When they register and make a deposit, you earn a commission.</div>
+                        <div style="font-size:13px;color:#a9a49a;line-height:1.6;">When they register and make a deposit, you earn a commission.</div>
                     </div>
                     <div style="display:flex;align-items:flex-start;gap:12px;">
                         <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <span style="font-size:12px;font-weight:800;color:#8b5cf6;">3</span>
                         </div>
-                        <div style="font-size:13px;color:#4b5563;line-height:1.6;">Your commission is added directly to your Exchange balance.</div>
+                        <div style="font-size:13px;color:#a9a49a;line-height:1.6;">Your commission is added directly to your Exchange balance.</div>
                     </div>
                     <div style="display:flex;align-items:flex-start;gap:12px;">
                         <div style="width:28px;height:28px;border-radius:50%;background:rgba(139,92,246,0.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                             <span style="font-size:12px;font-weight:800;color:#8b5cf6;">4</span>
                         </div>
-                        <div style="font-size:13px;color:#4b5563;line-height:1.6;">The more active referrals you have, the higher your team level and rewards.</div>
+                        <div style="font-size:13px;color:#a9a49a;line-height:1.6;">The more active referrals you have, the higher your team level and rewards.</div>
                     </div>
                 </div>
             </div>
 
             <!-- My Referrals List -->
-            <div style="margin:0 14px 20px;background:#fff;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+            <div style="margin:0 14px 20px;background:#11100e;border-radius:16px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,0.35);">
                 <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
                     <div style="width:4px;height:18px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);border-radius:2px;"></div>
-                    <span style="font-size:14px;font-weight:700;color:#1a1a2e;">My Referrals</span>
+                    <span style="font-size:14px;font-weight:700;color:#f5f1e8;">My Referrals</span>
                 </div>
                 <div id="referral-list-display">
                     <div style="text-align:center;padding:24px;">

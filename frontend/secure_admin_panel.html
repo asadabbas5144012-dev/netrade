@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NETRONTRADE Admin Panel</title>
+<title>NEOTRADE Admin Panel</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -441,7 +441,7 @@
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">
-      <span>NETRONTRADE</span>
+      <span>NEOTRADE</span>
       <p>Admin Control Panel</p>
     </div>
     <div id="loginAlert"></div>
@@ -472,7 +472,7 @@
     <div class="sidebar-logo">
       <div class="logo-icon">T</div>
       <div>
-        <div class="logo-text">NETRONTRADE</div>
+        <div class="logo-text">NEOTRADE</div>
         <div style="font-size:11px;color:var(--text2);">Admin Panel</div>
       </div>
     </div>
@@ -2181,7 +2181,7 @@ async function downloadReport(type) {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'netrontrade-report.' + type;
+    a.download = 'neotrade-report.' + type;
     document.body.appendChild(a);
     a.click();
     a.remove();
@@ -3771,7 +3771,7 @@ async function notifyUsersOfUpdate() {
   try {
     var res = await apiPost('/api/admin/notify-update', {
       title: 'App Update Available',
-      message: 'A new version (v' + version + ') of NETRONTRADE is available. Update now for the latest features and fixes.'
+      message: 'A new version (v' + version + ') of NEOTRADE is available. Update now for the latest features and fixes.'
     });
     showAlert(alertEl, 'Notified ' + res.count + ' users.', 'success');
   } catch(e) {
