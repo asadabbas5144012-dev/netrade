@@ -6,6 +6,7 @@ const router = express.Router();
 const authMiddleware = require('../middlewares/auth');
 const { getDepositAddress, DEPOSIT_NETWORK } = require('../config/depositAddress');
 const { verifyUsdtDeposit, isTxHash } = require('../services/trc20Verifier');
+const { debit, InsufficientBalance } = require('../services/ledger');
 
 // ── TRC20 DEPOSIT ADDRESS + QR CODE ──
 // Same fixed platform address for every account (see config/depositAddress.js).
@@ -116,6 +117,7 @@ router.post('/withdraw', authMiddleware, async (req, res) => {
 
     const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
     if (!user) return res.status(404).json({ error: 'User not found' });
+    if (user.suspended) return res.status(403).json({ error: 'Account suspended: ' + (user.suspendedReason || 'Contact support') });
     if (!user.boundAddress) return res.status(400).json({ error: 'Please bind a withdrawal address first' });
 
     // Enforced server-side, not just gated in the UI — a user with 2FA
@@ -145,28 +147,30 @@ router.post('/withdraw', authMiddleware, async (req, res) => {
     const feeAmount = amt * (feePct / 100);
     const finalAmount = Math.max(0, amt - feeAmount);
 
-    // Lock balance: move from balance → lockedBalance (pending admin approval)
-    const [withdrawal] = await prisma.$transaction([
-      prisma.withdrawal.create({
-        data: {
-          userId: req.user.userId,
-          toAddress: user.boundAddress,
-          network: 'TRC20',
-          amount: amt,
-          handlingFeePct: feePct,
-          handlingFeeAmount: feeAmount,
-          finalAmount,
-          status: 'pending'
-        }
-      }),
-      prisma.user.update({
-        where: { id: req.user.userId },
-        data: {
-          balance: { decrement: amt },
-          lockedBalance: { increment: amt }
-        }
-      })
-    ]);
+    // Lock balance: move from balance → lockedBalance (pending admin approval).
+    // The debit is conditional so simultaneous requests cannot overspend.
+    let withdrawal;
+    try {
+      withdrawal = await prisma.$transaction(async (tx) => {
+        if (!(await debit(tx, user.id, 'balance', amt))) throw new InsufficientBalance();
+        await tx.user.update({ where: { id: user.id }, data: { lockedBalance: { increment: amt } } });
+        return tx.withdrawal.create({
+          data: {
+            userId: user.id,
+            toAddress: user.boundAddress,
+            network: 'TRC20',
+            amount: amt,
+            handlingFeePct: feePct,
+            handlingFeeAmount: feeAmount,
+            finalAmount,
+            status: 'pending'
+          }
+        });
+      });
+    } catch (e) {
+      if (e instanceof InsufficientBalance) return res.status(400).json({ error: 'Insufficient balance' });
+      throw e;
+    }
 
     if (global.ns) await global.ns.send(req.user.userId, 'Withdrawal Submitted', `Your withdrawal of ${amt} USDT to ${user.boundAddress} is pending admin approval.`, 'WITHDRAWAL');
     res.json(withdrawal);
@@ -198,11 +202,16 @@ router.post('/bind-address', authMiddleware, async (req, res) => {
     const { address, chain } = req.body;
     if (!address || address.trim().length < 10) return res.status(400).json({ error: 'Valid wallet address required' });
     const chainType = chain || 'TRC20';
-    await prisma.user.update({
-      where: { id: req.user.userId },
-      data: { boundAddress: address.trim(), boundAddressChain: chainType }
-    });
-    res.json({ success: true, address: address.trim(), chain: chainType });
+    const current = await prisma.user.findUnique({ where: { id: req.user.userId }, select: { boundAddress: true } });
+    if (!current) return res.status(404).json({ error: 'User not found' });
+    const data = { boundAddress: address.trim(), boundAddressChain: chainType };
+    // Replacing an already-bound address gets the same 24h withdrawal freeze
+    // as unbinding, so the freeze cannot be skipped by binding over it.
+    if (current.boundAddress && current.boundAddress !== address.trim()) {
+      data.withdrawFreezeUntil = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    }
+    await prisma.user.update({ where: { id: req.user.userId }, data });
+    res.json({ success: true, address: address.trim(), chain: chainType, freezeUntil: data.withdrawFreezeUntil || null });
   } catch (error) {
     res.status(500).json({ error: 'An internal server error occurred.' });
   }
@@ -238,27 +247,6 @@ router.get('/info', authMiddleware, async (req, res) => {
       email: user.email,
       addresses
     });
-  } catch (error) {
-    res.status(500).json({ error: 'An internal server error occurred.' });
-  }
-});
-
-router.post('/deposit', authMiddleware, async (req, res) => {
-  try {
-    const { txHash, amount, network } = req.body;
-    if (!txHash || txHash.length < 10) return res.status(400).json({ error: 'Valid transaction hash required' });
-    const amt = parseFloat(amount);
-    if (!amt || amt < 10) return res.status(400).json({ error: 'Minimum deposit is 10 USDT' });
-
-    const settings = await prisma.platformSettings.findUnique({ where: { key: 'min_deposit' } });
-    const minDep = parseFloat(settings?.value || '10');
-    if (amt < minDep) return res.status(400).json({ error: `Minimum deposit is ${minDep} USDT` });
-
-    const tx = await prisma.transaction.create({
-      data: { userId: req.user.userId, type: 'DEPOSIT', amount: amt, status: 'PENDING', txHash, network: network || 'TRC20' }
-    });
-    if (global.ns) await global.ns.send(req.user.userId, 'Deposit Received', `Your deposit of ${amt} USDT is under review.`, 'DEPOSIT');
-    res.json(tx);
   } catch (error) {
     res.status(500).json({ error: 'An internal server error occurred.' });
   }
@@ -328,13 +316,12 @@ router.post('/convert', authMiddleware, async (req, res) => {
 
     const toAmount = (amt / parseFloat(rate)).toFixed(8);
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        balance: { decrement: amt },
-        convertedBalance: { increment: amt }
-      }
+    const ok = await prisma.$transaction(async (tx) => {
+      if (!(await debit(tx, user.id, 'balance', amt))) return false;
+      await tx.user.update({ where: { id: user.id }, data: { convertedBalance: { increment: amt } } });
+      return true;
     });
+    if (!ok) return res.status(400).json({ error: 'Insufficient balance' });
 
     res.json({ success: true, fromAmount: amt, toAmount, toAsset });
   } catch (error) {
@@ -370,15 +357,10 @@ router.post('/transfer', authMiddleware, async (req, res) => {
     if (user[fromField] < amt - 0.005) return res.status(400).json({ error: 'Insufficient balance in source wallet' });
     amt = Math.min(amt, user[fromField]);
 
-    await prisma.$transaction([
-      prisma.user.update({
-        where: { id: user.id },
-        data: {
-          [fromField]: { decrement: amt },
-          [toField]: { increment: amt }
-        }
-      }),
-      prisma.walletTransferLog.create({
+    const ok = await prisma.$transaction(async (tx) => {
+      if (!(await debit(tx, user.id, fromField, amt))) return false;
+      await tx.user.update({ where: { id: user.id }, data: { [toField]: { increment: amt } } });
+      await tx.walletTransferLog.create({
         data: {
           userId: user.id,
           fromWallet,
@@ -386,8 +368,10 @@ router.post('/transfer', authMiddleware, async (req, res) => {
           amount: amt,
           transferType: `${fromWallet}_TO_${toWallet}`
         }
-      })
-    ]);
+      });
+      return true;
+    });
+    if (!ok) return res.status(400).json({ error: 'Insufficient balance in source wallet' });
 
     res.json({ success: true, actualTransferAmt: amt, penaltyAmount: 0 });
   } catch (error) {

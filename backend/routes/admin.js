@@ -6,6 +6,7 @@ const router = express.Router();
 const authMiddleware = require('../middlewares/auth');
 const { testSmtp } = require('../services/mailer');
 const depositApproval = require('../services/depositApproval');
+const { claim } = require('../services/ledger');
 
 const adminMiddleware = (req, res, next) => {
   if (req.user.role !== 'ADMIN') return res.status(403).json({ error: 'Admin only' });
@@ -234,11 +235,13 @@ router.post('/transactions/:id/approve', authMiddleware, adminMiddleware, async 
     if (!transaction) return res.status(404).json({ error: 'Transaction not found' });
     if (transaction.status !== 'PENDING') return res.status(400).json({ error: 'Transaction already processed' });
 
+    // Only one request can move the transaction out of PENDING.
+    if (!(await claim(prisma.transaction, req.params.id, 'status', 'PENDING', 'COMPLETED'))) {
+      return res.status(400).json({ error: 'Transaction already processed' });
+    }
+
     if (transaction.type === 'DEPOSIT') {
-      await prisma.$transaction([
-        prisma.transaction.update({ where: { id: req.params.id }, data: { status: 'COMPLETED' } }),
-        prisma.user.update({ where: { id: transaction.userId }, data: { balance: { increment: transaction.amount } } })
-      ]);
+      await prisma.user.update({ where: { id: transaction.userId }, data: { balance: { increment: transaction.amount } } });
       const user = transaction.user;
       if (transaction.amount >= 300 && user.referredById) {
         const settings = await prisma.platformSettings.findUnique({ where: { key: 'referral_percentage' } });
@@ -252,7 +255,6 @@ router.post('/transactions/:id/approve', authMiddleware, adminMiddleware, async 
       }
       if (global.ns) await global.ns.send(transaction.userId, 'Deposit Approved', `Your deposit of ${transaction.amount} has been credited.`, 'DEPOSIT');
     } else if (transaction.type === 'WITHDRAWAL') {
-      await prisma.transaction.update({ where: { id: req.params.id }, data: { status: 'COMPLETED' } });
       if (global.ns) await global.ns.send(transaction.userId, 'Withdrawal Approved', `Your withdrawal of ${transaction.amount} has been processed.`, 'WITHDRAWAL');
     }
 
@@ -268,7 +270,10 @@ router.post('/transactions/:id/reject', authMiddleware, adminMiddleware, async (
     const transaction = await prisma.transaction.findUnique({ where: { id: req.params.id } });
     if (!transaction) return res.status(404).json({ error: 'Not found' });
     if (transaction.status !== 'PENDING') return res.status(400).json({ error: 'Already processed' });
-    await prisma.transaction.update({ where: { id: req.params.id }, data: { status: 'FAILED', note: reason } });
+    if (!(await claim(prisma.transaction, req.params.id, 'status', 'PENDING', 'FAILED'))) {
+      return res.status(400).json({ error: 'Already processed' });
+    }
+    await prisma.transaction.update({ where: { id: req.params.id }, data: { note: reason } });
     if (transaction.type === 'WITHDRAWAL') {
       await prisma.user.update({ where: { id: transaction.userId }, data: { balance: { increment: transaction.amount } } });
     }
@@ -358,10 +363,11 @@ router.post('/deposits/:id/reject', authMiddleware, adminMiddleware, async (req,
     if (!deposit) return res.status(404).json({ error: 'Deposit not found' });
     if (deposit.status !== 'pending_approval') return res.status(400).json({ error: 'Deposit already processed' });
 
-    await prisma.deposit.update({
-      where: { id: deposit.id },
+    const r = await prisma.deposit.updateMany({
+      where: { id: deposit.id, status: 'pending_approval' },
       data: { status: 'rejected', rejectionReason: reason || 'Rejected by admin', approvedBy: req.user.userId }
     });
+    if (r.count !== 1) return res.status(400).json({ error: 'Deposit already processed' });
 
     if (global.ns) await global.ns.send(deposit.userId, 'Deposit Rejected', reason || 'Your deposit was rejected. Please contact support.', 'DEPOSIT');
     res.json({ success: true });
@@ -432,17 +438,19 @@ router.post('/withdrawals/:id/approve', authMiddleware, adminMiddleware, async (
     if (!withdrawal) return res.status(404).json({ error: 'Withdrawal not found' });
     if (withdrawal.status !== 'pending') return res.status(400).json({ error: 'Withdrawal already processed' });
 
-    // Admin has manually sent funds. We just deduct the locked balance.
-    await prisma.$transaction([
-      prisma.withdrawal.update({
-        where: { id: withdrawal.id },
+    // Admin has manually sent funds. We just deduct the locked balance —
+    // conditional on the withdrawal still being pending, so an approve and a
+    // reject (or a double click) can never both apply.
+    const done = await prisma.$transaction(async (tx) => {
+      const r = await tx.withdrawal.updateMany({
+        where: { id: withdrawal.id, status: 'pending' },
         data: { status: 'completed', txHash: 'Manual-Transfer', processedAt: new Date(), processedBy: req.user.userId }
-      }),
-      prisma.user.update({
-        where: { id: withdrawal.userId },
-        data: { lockedBalance: { decrement: withdrawal.amount } }
-      })
-    ]);
+      });
+      if (r.count !== 1) return false;
+      await tx.user.update({ where: { id: withdrawal.userId }, data: { lockedBalance: { decrement: withdrawal.amount } } });
+      return true;
+    });
+    if (!done) return res.status(400).json({ error: 'Withdrawal already processed' });
 
     if (global.ns) await global.ns.send(withdrawal.userId, 'Withdrawal Completed', `Your withdrawal of ${withdrawal.amount} USDT has been manually approved and sent.`, 'WITHDRAWAL');
     res.json({ success: true });
@@ -458,19 +466,19 @@ router.post('/withdrawals/:id/reject', authMiddleware, adminMiddleware, async (r
     if (!withdrawal) return res.status(404).json({ error: 'Withdrawal not found' });
     if (withdrawal.status !== 'pending') return res.status(400).json({ error: 'Withdrawal already processed' });
 
-    await prisma.$transaction([
-      prisma.withdrawal.update({
-        where: { id: withdrawal.id },
+    const done = await prisma.$transaction(async (tx) => {
+      const r = await tx.withdrawal.updateMany({
+        where: { id: withdrawal.id, status: 'pending' },
         data: { status: 'rejected', rejectionReason: reason || 'Rejected by admin', processedAt: new Date(), processedBy: req.user.userId }
-      }),
-      prisma.user.update({
+      });
+      if (r.count !== 1) return false;
+      await tx.user.update({
         where: { id: withdrawal.userId },
-        data: {
-          balance: { increment: withdrawal.amount },
-          lockedBalance: { decrement: withdrawal.amount }
-        }
-      })
-    ]);
+        data: { balance: { increment: withdrawal.amount }, lockedBalance: { decrement: withdrawal.amount } }
+      });
+      return true;
+    });
+    if (!done) return res.status(400).json({ error: 'Withdrawal already processed' });
 
     if (global.ns) await global.ns.send(withdrawal.userId, 'Withdrawal Rejected', reason || 'Your withdrawal request was rejected. Funds have been returned.', 'WITHDRAWAL');
     res.json({ success: true });

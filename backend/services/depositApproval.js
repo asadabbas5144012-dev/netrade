@@ -18,16 +18,18 @@ async function approveDeposit(depositId, approvedByUserId = null) {
     creditAmount = deposit.amount * trxPrice;
   }
 
-  await prisma.$transaction([
-    prisma.deposit.update({
-      where: { id: deposit.id },
+  // Conditional on the status still being pending_approval, so a double
+  // click or two admins approving at once credits the deposit only once.
+  const credited = await prisma.$transaction(async (tx) => {
+    const r = await tx.deposit.updateMany({
+      where: { id: deposit.id, status: 'pending_approval' },
       data: { status: 'confirmed', approvedAt: new Date(), approvedBy: approvedByUserId }
-    }),
-    prisma.user.update({
-      where: { id: deposit.userId },
-      data: { balance: { increment: creditAmount } }
-    })
-  ]);
+    });
+    if (r.count !== 1) return false;
+    await tx.user.update({ where: { id: deposit.userId }, data: { balance: { increment: creditAmount } } });
+    return true;
+  });
+  if (!credited) throw new Error('Deposit already processed');
 
   let notificationMsg = `Your deposit of ${deposit.amount} ${currency} has been credited to your account.`;
   if (currency === 'TRX') {

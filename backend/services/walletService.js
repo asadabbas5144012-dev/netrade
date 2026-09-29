@@ -1,4 +1,5 @@
 const prisma = require('../prismaClient');
+const { debit } = require('./ledger');
 
 class WalletService {
   constructor(notificationService) {
@@ -21,13 +22,14 @@ class WalletService {
     if (!user) throw new Error('User not found');
     if (user.balance < amount) throw new Error('Insufficient balance');
 
-    const result = await prisma.$transaction([
-      prisma.investment.create({ data: { userId, amount, status: 'ACTIVE' } }),
-      prisma.user.update({ where: { id: userId }, data: { balance: { decrement: amount }, investments: { increment: amount } } })
-    ]);
+    const investment = await prisma.$transaction(async (tx) => {
+      if (!(await debit(tx, userId, 'balance', amount))) throw new Error('Insufficient balance');
+      await tx.user.update({ where: { id: userId }, data: { investments: { increment: amount } } });
+      return tx.investment.create({ data: { userId, amount, status: 'ACTIVE' } });
+    });
 
     if (this.ns) await this.ns.send(userId, 'Investment Created', `${amount} USDT invested successfully.`, 'INVESTMENT');
-    return result[0];
+    return investment;
   }
 }
 
