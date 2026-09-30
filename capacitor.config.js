@@ -29,7 +29,7 @@ if (/^(localhost|127\.|10\.|192\.168\.|0\.0\.0\.0)/.test(host) || host === '10.0
 /** @type {import('@capacitor/cli').CapacitorConfig} */
 module.exports = {
   appId: 'com.netrontrade.app',
-  appName: 'NETRADE',
+  appName: 'NEOTRADE',
   webDir: 'www',
   server: {
     url: appUrl,
