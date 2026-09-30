@@ -10,7 +10,7 @@
 //   NETRONTRADE_APP_URL=https://your-domain npx cap sync android
 require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
-const DEFAULT_URL = 'https://netrontrade.onrender.com';
+const DEFAULT_URL = 'https://netrade.onrender.com';
 const appUrl = (process.env.NETRONTRADE_APP_URL || DEFAULT_URL).trim().replace(/\/+$/, '');
 
 let host;
@@ -29,7 +29,7 @@ if (/^(localhost|127\.|10\.|192\.168\.|0\.0\.0\.0)/.test(host) || host === '10.0
 /** @type {import('@capacitor/cli').CapacitorConfig} */
 module.exports = {
   appId: 'com.netrontrade.app',
-  appName: 'NEOTRADE',
+  appName: 'NETRADE',
   webDir: 'www',
   server: {
     url: appUrl,

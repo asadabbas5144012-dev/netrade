@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">NEOTRADE</string>
-    <string name="title_activity_main">NEOTRADE</string>
+    <string name="app_name">NETRADE</string>
+    <string name="title_activity_main">NETRADE</string>
     <string name="package_name">com.netrontrade.app</string>
     <string name="custom_url_scheme">com.netrontrade.app</string>
 </resources>

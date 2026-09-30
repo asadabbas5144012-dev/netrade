@@ -75,7 +75,7 @@ npm run android:debug    # assembleDebug -> android/app/build/outputs/apk/debug/
 npm run android:release  # assembleRelease (unsigned unless NETRONTRADE_KEYSTORE_* env vars are set)
 ```
 
-`NETRONTRADE_APP_URL` (in `.env`, default `https://netrontrade.onrender.com`)
+`NETRONTRADE_APP_URL` (in `.env`, default `https://netrade.onrender.com`)
 is the production URL the APK loads — it must be a public `https://` URL,
 never `localhost`. Requires a JDK 17+ and the Android SDK (`ANDROID_HOME`) to
 be installed; see `capacitor.config.js` for the rest of the build config.
