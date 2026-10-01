@@ -24,6 +24,24 @@ function genOtp() {
 
 const MAX_OTP_ATTEMPTS = 5;
 
+// Top-level domain must be 2+ letters, so typos like "name@gmail.c" are
+// caught here instead of being rejected later by the email provider.
+const EMAIL_RE = /^[^\s@]+@[^\s@.]+(\.[^\s@.]+)*\.[a-z]{2,}$/i;
+// Common misspellings of popular providers → the intended domain.
+const DOMAIN_TYPOS = {
+  'gmail.c': 'gmail.com', 'gmail.co': 'gmail.com', 'gmail.cm': 'gmail.com', 'gmail.om': 'gmail.com',
+  'gmail.con': 'gmail.com', 'gmail.comm': 'gmail.com', 'gmai.com': 'gmail.com', 'gmial.com': 'gmail.com',
+  'gamil.com': 'gmail.com', 'gmal.com': 'gmail.com', 'gnail.com': 'gmail.com', 'gmail.cpm': 'gmail.com',
+  'yahoo.co': 'yahoo.com', 'yaho.com': 'yahoo.com', 'hotmail.co': 'hotmail.com', 'hotmal.com': 'hotmail.com',
+  'outlook.co': 'outlook.com', 'outlok.com': 'outlook.com'
+};
+function emailError(email) {
+  const domain = email.split('@')[1] || '';
+  if (DOMAIN_TYPOS[domain]) return `Please check your email — did you mean ${email.split('@')[0]}@${DOMAIN_TYPOS[domain]}?`;
+  if (!EMAIL_RE.test(email)) return 'Please enter a valid email address.';
+  return null;
+}
+
 function normEmail(raw) {
   return String(raw || '').trim().toLowerCase();
 }
@@ -40,9 +58,8 @@ const { sendOtpEmail, sendPasswordResetEmail } = require('../services/mailer');
 router.post('/send-otp', async (req, res) => {
   try {
     const email = normEmail(req.body.email);
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      return res.status(400).json({ error: 'Valid email required' });
-    }
+    const invalid = emailError(email);
+    if (invalid) return res.status(400).json({ error: invalid });
     const existing = await findUserByEmail(email);
     if (existing) return res.status(400).json({ error: 'Email already registered' });
 
@@ -69,7 +86,8 @@ router.post('/register', async (req, res) => {
     const { password, referralCode, otp } = req.body;
     const email = normEmail(req.body.email);
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return res.status(400).json({ error: 'Invalid email format' });
+    const invalid = emailError(email);
+    if (invalid) return res.status(400).json({ error: invalid });
     if (password.length < 6) return res.status(400).json({ error: 'Password must be at least 6 characters' });
 
     // Verify OTP
