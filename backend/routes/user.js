@@ -147,7 +147,7 @@ router.get('/me', authMiddleware, async (req, res) => {
     });
     const todayPnl = todayTrades.reduce((sum, t) => sum + (t.profit || 0), 0);
 
-    const { password, resetToken, ...safe } = user;
+    const { password, resetToken, resetTokenExpiry, otpSecret, ...safe } = user;
     safe.todayPnl = todayPnl;
     safe.depositAddress = getDepositAddress();
     res.json(safe);

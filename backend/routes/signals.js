@@ -2,6 +2,7 @@ const express = require('express');
 const prisma = require('../prismaClient');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth');
+const { debit, claim } = require('../services/ledger');
 
 // Cache tier thresholds — refreshed every 60s
 // Tiers now live as a dynamic JSON array (PlatformSettings key
@@ -279,8 +280,9 @@ router.post('/trade', authMiddleware, async (req, res) => {
       });
     }
 
-    const [trade] = await prisma.$transaction([
-      prisma.trade.create({
+    const trade = await prisma.$transaction(async (tx) => {
+      if (!(await debit(tx, user.id, 'perpetualBalance', amt))) return null;
+      return tx.trade.create({
         data: {
           userId: user.id,
           signalId,
@@ -289,12 +291,9 @@ router.post('/trade', authMiddleware, async (req, res) => {
           outcome: 'PENDING',
           entryPrice: entryPrice ? parseFloat(entryPrice) : null
         }
-      }),
-      prisma.user.update({
-        where: { id: user.id },
-        data: { perpetualBalance: { decrement: amt } }
-      })
-    ]);
+      });
+    });
+    if (!trade) return res.status(400).json({ error: 'Insufficient Perpetual wallet balance.' });
 
     res.json(trade);
   } catch (error) {
@@ -311,6 +310,7 @@ router.post('/manual-trade', authMiddleware, async (req, res) => {
     if (!pair || !amt || amt <= 0) return res.status(400).json({ error: 'Invalid parameters' });
 
     const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
+    if (!user) return res.status(404).json({ error: 'User not found' });
     // This was checking tradeBalance while every branch below always
     // decrements perpetualBalance — a real pre-existing bug (a user with
     // plenty of Trade balance but none in Perpetual could pass this check
@@ -356,39 +356,38 @@ router.post('/manual-trade', authMiddleware, async (req, res) => {
       });
       if (existing) return res.status(400).json({ error: 'You already have an active trade on this signal.' });
 
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { perpetualBalance: { decrement: amt } }
-      });
-      trade = await prisma.trade.create({
-        data: {
-          userId: user.id,
-          signalId: interceptedSignal.id,
-          amount: amt,
-          direction: direction || interceptedSignal.direction,
-          outcome: 'PENDING',
-          entryPrice: entryPrice ? parseFloat(entryPrice) : null
-        }
+      trade = await prisma.$transaction(async (tx) => {
+        if (!(await debit(tx, user.id, 'perpetualBalance', amt))) return null;
+        return tx.trade.create({
+          data: {
+            userId: user.id,
+            signalId: interceptedSignal.id,
+            amount: amt,
+            direction: direction || interceptedSignal.direction,
+            outcome: 'PENDING',
+            entryPrice: entryPrice ? parseFloat(entryPrice) : null
+          }
+        });
       });
     } else {
       // Normal Manual Trade
-      await prisma.user.update({
-        where: { id: user.id },
-        data: { perpetualBalance: { decrement: amt } }
-      });
-      trade = await prisma.trade.create({
-        data: {
-          userId: user.id,
-          pair: pair,
-          amount: amt,
-          direction: direction,
-          outcome: 'PENDING',
-          duration: duration || 600, // typically 600 seconds (10 mins)
-          signalId: null,
-          entryPrice: entryPrice ? parseFloat(entryPrice) : null
-        }
+      trade = await prisma.$transaction(async (tx) => {
+        if (!(await debit(tx, user.id, 'perpetualBalance', amt))) return null;
+        return tx.trade.create({
+          data: {
+            userId: user.id,
+            pair: pair,
+            amount: amt,
+            direction: direction,
+            outcome: 'PENDING',
+            duration: duration || 600, // typically 600 seconds (10 mins)
+            signalId: null,
+            entryPrice: entryPrice ? parseFloat(entryPrice) : null
+          }
+        });
       });
     }
+    if (!trade) return res.status(400).json({ error: 'Insufficient Perpetual balance' });
 
     res.json({ success: true, trade });
   } catch (err) {
@@ -412,17 +411,15 @@ router.post('/manual-cancel', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Time limit exceeded. Trade cannot be cancelled and will be resolved.' });
     }
 
-    // Return balance
-    await prisma.user.update({
-      where: { id: req.user.userId },
-      data: { perpetualBalance: { increment: trade.amount } }
+    // Mark as cancelled first — only one request can move it out of PENDING,
+    // so the refund below can never be paid twice.
+    const refunded = await prisma.$transaction(async (tx) => {
+      if (!(await claim(tx.trade, tradeId, 'outcome', 'PENDING', 'CANCELLED'))) return false;
+      await tx.trade.update({ where: { id: tradeId }, data: { profit: 0 } });
+      await tx.user.update({ where: { id: req.user.userId }, data: { perpetualBalance: { increment: trade.amount } } });
+      return true;
     });
-
-    // Mark as cancelled
-    await prisma.trade.update({
-      where: { id: tradeId },
-      data: { outcome: 'CANCELLED', profit: 0 }
-    });
+    if (!refunded) return res.status(400).json({ error: 'Trade not found or already closed' });
 
     res.json({ success: true });
   } catch (err) {
@@ -452,16 +449,13 @@ router.post('/manual-resolve', authMiddleware, async (req, res) => {
       }
     }
 
-    await prisma.$transaction([
-      prisma.trade.update({
-        where: { id: tradeId },
-        data: { outcome: 'LOSS', profit: -trade.amount, closePrice: closePrice }
-      }),
-      prisma.user.update({
-        where: { id: trade.userId },
-        data: { profitBalance: { increment: -trade.amount } }
-      })
-    ]);
+    const resolved = await prisma.$transaction(async (tx) => {
+      if (!(await claim(tx.trade, tradeId, 'outcome', 'PENDING', 'LOSS'))) return false;
+      await tx.trade.update({ where: { id: tradeId }, data: { profit: -trade.amount, closePrice: closePrice } });
+      await tx.user.update({ where: { id: trade.userId }, data: { profitBalance: { increment: -trade.amount } } });
+      return true;
+    });
+    if (!resolved) return res.status(400).json({ error: 'Trade not found or already closed' });
 
     res.json({ success: true });
   } catch (err) {

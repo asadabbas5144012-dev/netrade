@@ -210,18 +210,24 @@ class SignalService {
           const profit = isWin ? trade.amount * (signal.rewardPercentage / 100) : -trade.amount;
           const payout = isWin ? trade.amount + profit : 0;
 
-          await prisma.$transaction([
-            prisma.trade.update({
-              where: { id: trade.id },
+          // completeSignal runs from the expiry timer and from every client
+          // polling /my-trades, often at the same moment. Settle each trade
+          // only if it is still PENDING so a win is never paid out twice.
+          const settled = await prisma.$transaction(async (tx) => {
+            const r = await tx.trade.updateMany({
+              where: { id: trade.id, outcome: 'PENDING' },
               data: { outcome: isWin ? 'WIN' : 'LOSS', profit }
-            }),
-            prisma.user.update({
+            });
+            if (r.count !== 1) return false;
+            await tx.user.update({
               where: { id: trade.userId },
               data: isWin
                 ? { perpetualBalance: { increment: payout }, profitBalance: { increment: profit } }
                 : { profitBalance: { increment: profit } }
-            })
-          ]);
+            });
+            return true;
+          });
+          if (!settled) continue;
 
           if (this.ns) {
             const msg = isWin

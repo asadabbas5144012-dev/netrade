@@ -36,8 +36,9 @@ const upload = multer({
 // image. Admin-only, since only the admin panel ever needs to view these.
 router.get('/file/:filename', authMiddleware, async (req, res) => {
   try {
-    const user = await prisma.user.findUnique({ where: { id: req.user.userId } });
-    if (!user || user.role !== 'ADMIN') return res.status(403).json({ error: 'Admin only' });
+    // The admin panel logs in via /auth/admin-login, whose signed token has
+    // role ADMIN but userId "admin" (no User row), so trust the token's role.
+    if (req.user.role !== 'ADMIN') return res.status(403).json({ error: 'Admin only' });
 
     const filename = path.basename(req.params.filename); // strip any path traversal
     const filePath = path.join(uploadDir, filename);

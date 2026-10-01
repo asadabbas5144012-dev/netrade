@@ -2383,27 +2383,6 @@ function close2faCodePrompt() {
     if (modal) modal.style.display = 'none';
 }
 
-async function submitDepositProof() {
-    if (!authToken) { showToast('Please login first'); return; }
-    const txHash = document.getElementById('deposit-txhash')?.value?.trim();
-    const amount = parseFloat(document.getElementById('deposit-amount-input')?.value);
-    if (!txHash) { showToast('Please enter transaction hash'); return; }
-    if (!amount || amount < 10) { showToast('Minimum deposit is 10 USDT'); return; }
-    const network = document.querySelector('.network-tabs button.active')?.textContent || 'TRC20';
-    try {
-        const res = await fetch('/api/wallet/deposit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-            body: JSON.stringify({ txHash, amount, network })
-        });
-        const data = await res.json();
-        if (data.error) { showToast(data.error); return; }
-        showToast('Deposit submitted for review!');
-        document.getElementById('deposit-txhash').value = '';
-        document.getElementById('deposit-amount-input').value = '';
-    } catch (e) { showToast('Submission failed'); }
-}
-
 function doLogout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
