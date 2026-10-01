@@ -130,6 +130,11 @@ if (useGmail) {
   console.log(`[Mailer] Using Gmail API, from ${/@gmail\.com>?\s*$/i.test(config.from) ? config.from : DEFAULT_FROM}`);
 } else if (brevoKey) {
   console.log(`[Mailer] Using Brevo HTTP API, from ${config.from}`);
+  // Log which Brevo account this key belongs to — emails only show up in
+  // that account's logs, so a key from a different account looks like
+  // "sent" here but never appears in the dashboard being checked.
+  describeBrevoAccount().then(info => console.log(`[Mailer] Brevo key belongs to ${info}`))
+    .catch(error => console.error(`[Mailer] Brevo API key check failed — ${describeError(error)}`));
 } else if (config.missing.length) {
   console.error(`[Mailer] SMTP is not configured — missing ${config.missing.join(', ')}. OTP emails will fail until these are set in the environment.`);
 } else {
@@ -152,6 +157,27 @@ const transporter = config.missing.length ? null : nodemailer.createTransport({
   greetingTimeout: 10000,
   socketTimeout: 20000
 });
+
+async function describeBrevoAccount() {
+  const a = await brevoRequest('/account');
+  const credits = (a.plan || []).map(p => `${p.type}: ${p.credits} ${p.creditsType || 'credits'} left`).join(', ');
+  return `account ${a.email} (${a.companyName || [a.firstName, a.lastName].filter(Boolean).join(' ') || 'no name'})${credits ? ' — ' + credits : ''}`;
+}
+
+// Brevo accepting a send only means it was queued. ~30s later, ask Brevo
+// what actually happened (delivered, blocked, bounced, error + reason) and
+// log it, so a failed delivery is visible in the server logs.
+function logBrevoDelivery(messageId, to) {
+  setTimeout(async () => {
+    try {
+      const data = await brevoRequest(`/smtp/statistics/events?messageId=${encodeURIComponent(messageId)}&limit=20&sort=desc`);
+      const events = (data.events || []).map(e => e.event + (e.reason ? ` (${e.reason})` : '')).join(', ');
+      console.log(`[Mailer] Brevo status for ${to} ${messageId}: ${events || 'no events yet (still queued, or not processed by this account)'}`);
+    } catch (error) {
+      console.error(`[Mailer] Could not read Brevo status for ${to}: ${describeError(error)}`);
+    }
+  }, 30000).unref();
+}
 
 function describeError(error) {
   // e.g. "EAUTH: Invalid login: 535 Authentication failed"
@@ -176,6 +202,7 @@ async function sendMail({ to, subject, html, text }) {
     try {
       const data = await brevoRequest('/smtp/email', { sender: parseFrom(config.from), to: [{ email: to }], subject, htmlContent: html, textContent: text });
       console.log(`[Mailer] Sent "${subject}" to ${to} via Brevo (${data.messageId})`);
+      if (data.messageId) logBrevoDelivery(data.messageId, to);
       return { success: true };
     } catch (error) {
       console.error(`[Mailer] Brevo failed to send "${subject}" to ${to}: ${describeError(error)}`);
@@ -252,6 +279,7 @@ async function sendPasswordResetEmail(toEmail, resetCode) {
 // imports it). Verifies connect + STARTTLS/TLS + login, and if a recipient is
 // given also sends a real test email through the same path as OTP emails.
 async function testSmtp(toEmail) {
+  let brevoAccountInfo = '';
   if (useGmail) {
     try {
       await gmailAccessToken();
@@ -260,7 +288,7 @@ async function testSmtp(toEmail) {
     }
   } else if (brevoKey) {
     try {
-      await brevoRequest('/account');
+      brevoAccountInfo = await describeBrevoAccount();
     } catch (error) {
       return { success: false, error: `Brevo API key rejected — ${describeError(error)}` };
     }
@@ -275,7 +303,7 @@ async function testSmtp(toEmail) {
     }
   }
   if (!toEmail) {
-    return { success: true, message: useGmail ? 'Gmail API credentials are valid.' : brevoKey ? 'Brevo API key is valid.' : `Connected and authenticated to ${config.host}:${config.port}.` };
+    return { success: true, message: useGmail ? 'Gmail API credentials are valid.' : brevoKey ? `Brevo API key is valid — ${brevoAccountInfo}.` : `Connected and authenticated to ${config.host}:${config.port}.` };
   }
   const result = await sendMail({
     to: toEmail,
