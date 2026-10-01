@@ -26,6 +26,12 @@ const MailComposer = require('nodemailer/lib/mail-composer');
 // SMTP_* variables above are ignored except SMTP_FROM (the verified sender).
 //   BREVO_API_KEY  Brevo -> SMTP & API -> API Keys (starts with "xkeysib-")
 //
+// Google Apps Script relay (no Google Cloud project or card needed): a small
+// script deployed as a web app inside the Gmail account sends the mail with
+// GmailApp. Set MAIL_WEBHOOK_URL (the /exec URL) and MAIL_WEBHOOK_SECRET (the
+// same secret written in the script). Consumer Gmail allows ~100
+// recipients/day this way. Used when the Gmail API is not configured.
+//
 // Gmail API (most reliable for a @gmail.com sender, also HTTPS/443): when
 // GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET and GMAIL_REFRESH_TOKEN are all set,
 // mail is sent by Gmail itself from the authorized account, so it passes
@@ -72,6 +78,27 @@ const gmail = {
   refreshToken: env('GMAIL_REFRESH_TOKEN')
 };
 const useGmail = !!(gmail.clientId && gmail.clientSecret && gmail.refreshToken);
+const webhook = { url: env('MAIL_WEBHOOK_URL'), secret: env('MAIL_WEBHOOK_SECRET') };
+const useWebhook = !useGmail && !!(webhook.url && webhook.secret);
+
+// Apps Script answers a POST with a 302 to a googleusercontent.com URL that
+// holds the script's output; fetch follows it and we read that JSON.
+async function webhookSend(payload) {
+  const res = await fetch(webhook.url, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ secret: webhook.secret, ...payload }),
+    redirect: 'follow',
+    signal: AbortSignal.timeout(30000)
+  });
+  const body = await res.text();
+  let data;
+  try { data = JSON.parse(body); } catch (e) {
+    throw Object.assign(new Error(`unexpected response (HTTP ${res.status}) — check the web app is deployed with access "Anyone"`), { code: 'WEBHOOK' });
+  }
+  if (!res.ok || !data.ok) throw Object.assign(new Error(data.error || `HTTP ${res.status}`), { code: 'WEBHOOK' });
+  return data;
+}
 
 let gmailToken = null; // { value, expiresAt }
 async function gmailAccessToken() {
@@ -128,6 +155,8 @@ async function brevoRequest(path, body) {
 
 if (useGmail) {
   console.log(`[Mailer] Using Gmail API, from ${/@gmail\.com>?\s*$/i.test(config.from) ? config.from : DEFAULT_FROM}`);
+} else if (useWebhook) {
+  console.log('[Mailer] Using Google Apps Script relay (sends from the Gmail account that owns the script)');
 } else if (brevoKey) {
   console.log(`[Mailer] Using Brevo HTTP API, from ${config.from}`);
   // Log which Brevo account this key belongs to — emails only show up in
@@ -195,6 +224,16 @@ async function sendMail({ to, subject, html, text }) {
       return { success: true };
     } catch (error) {
       console.error(`[Mailer] Gmail API failed to send "${subject}" to ${to}: ${describeError(error)}`);
+      return { success: false, error: describeError(error) };
+    }
+  }
+  if (useWebhook) {
+    try {
+      await webhookSend({ to, subject, html, text, name: parseFrom(config.from).name || 'NEOTRADE' });
+      console.log(`[Mailer] Sent "${subject}" to ${to} via Apps Script`);
+      return { success: true };
+    } catch (error) {
+      console.error(`[Mailer] Apps Script failed to send "${subject}" to ${to}: ${describeError(error)}`);
       return { success: false, error: describeError(error) };
     }
   }
@@ -286,6 +325,12 @@ async function testSmtp(toEmail) {
     } catch (error) {
       return { success: false, error: `Gmail API credentials rejected — ${describeError(error)}` };
     }
+  } else if (useWebhook) {
+    try {
+      await webhookSend({ ping: true });
+    } catch (error) {
+      return { success: false, error: `Apps Script relay check failed — ${describeError(error)}` };
+    }
   } else if (brevoKey) {
     try {
       brevoAccountInfo = await describeBrevoAccount();
@@ -295,7 +340,7 @@ async function testSmtp(toEmail) {
   } else if (!transporter) {
     return { success: false, error: `SMTP is not configured. Set ${config.missing.join(', ')} in the Render environment variables.` };
   }
-  if (!brevoKey && !useGmail) {
+  if (!brevoKey && !useGmail && !useWebhook) {
     try {
       await transporter.verify();
     } catch (error) {
@@ -303,7 +348,7 @@ async function testSmtp(toEmail) {
     }
   }
   if (!toEmail) {
-    return { success: true, message: useGmail ? 'Gmail API credentials are valid.' : brevoKey ? `Brevo API key is valid — ${brevoAccountInfo}.` : `Connected and authenticated to ${config.host}:${config.port}.` };
+    return { success: true, message: useGmail ? 'Gmail API credentials are valid.' : useWebhook ? 'Apps Script relay is reachable.' : brevoKey ? `Brevo API key is valid — ${brevoAccountInfo}.` : `Connected and authenticated to ${config.host}:${config.port}.` };
   }
   const result = await sendMail({
     to: toEmail,
