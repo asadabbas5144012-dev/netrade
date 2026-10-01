@@ -30,6 +30,11 @@ services:
       - key: APP_DOMAIN
         sync: false
       # OTP / password-reset email (server-only - set in the Render dashboard).
+      # Google Apps Script relay (no card needed) — see scripts/gmail-relay.gs.
+      - key: MAIL_WEBHOOK_URL
+        sync: false
+      - key: MAIL_WEBHOOK_SECRET
+        sync: false
       # Gmail API (preferred for a @gmail.com sender; used when all three are set).
       - key: GMAIL_CLIENT_ID
         sync: false
