@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const MailComposer = require('nodemailer/lib/mail-composer');
 
 // Provider-independent SMTP mailer. Configuration comes ONLY from the server
 // environment (Render dashboard, or a local .env that is never committed) —
@@ -24,6 +25,11 @@ const nodemailer = require('nodemailer');
 // go through Brevo's HTTP API on port 443, which Render never blocks, and the
 // SMTP_* variables above are ignored except SMTP_FROM (the verified sender).
 //   BREVO_API_KEY  Brevo -> SMTP & API -> API Keys (starts with "xkeysib-")
+//
+// Gmail API (most reliable for a @gmail.com sender, also HTTPS/443): when
+// GMAIL_CLIENT_ID, GMAIL_CLIENT_SECRET and GMAIL_REFRESH_TOKEN are all set,
+// mail is sent by Gmail itself from the authorized account, so it passes
+// Gmail's own checks and lands in the inbox. This takes priority over Brevo.
 
 const DEFAULT_FROM = 'NEOTRADE <netradeofficiall@gmail.com>';
 const REQUIRED_VARS = ['SMTP_HOST', 'SMTP_USER', 'SMTP_PASS'];
@@ -60,6 +66,47 @@ function readConfig() {
 
 const config = readConfig();
 const brevoKey = env('BREVO_API_KEY');
+const gmail = {
+  clientId: env('GMAIL_CLIENT_ID'),
+  clientSecret: env('GMAIL_CLIENT_SECRET'),
+  refreshToken: env('GMAIL_REFRESH_TOKEN')
+};
+const useGmail = !!(gmail.clientId && gmail.clientSecret && gmail.refreshToken);
+
+let gmailToken = null; // { value, expiresAt }
+async function gmailAccessToken() {
+  if (gmailToken && Date.now() < gmailToken.expiresAt) return gmailToken.value;
+  const res = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: gmail.clientId,
+      client_secret: gmail.clientSecret,
+      refresh_token: gmail.refreshToken,
+      grant_type: 'refresh_token'
+    }),
+    signal: AbortSignal.timeout(15000)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok || !data.access_token) {
+    throw Object.assign(new Error(data.error_description || data.error || `HTTP ${res.status}`), { code: 'GMAIL_AUTH' });
+  }
+  gmailToken = { value: data.access_token, expiresAt: Date.now() + Math.max(60, (data.expires_in || 3600) - 120) * 1000 };
+  return gmailToken.value;
+}
+
+async function gmailSend({ from, to, subject, html, text }) {
+  const raw = await new MailComposer({ from, to, subject, html, text }).compile().build();
+  const res = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+    method: 'POST',
+    headers: { authorization: `Bearer ${await gmailAccessToken()}`, 'content-type': 'application/json' },
+    body: JSON.stringify({ raw: raw.toString('base64url') }),
+    signal: AbortSignal.timeout(15000)
+  });
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw Object.assign(new Error(data.error?.message || `HTTP ${res.status}`), { code: `GMAIL_${res.status}` });
+  return data;
+}
 
 // "NEOTRADE <no-reply@x.com>" -> { name, email }
 function parseFrom(from) {
@@ -79,7 +126,9 @@ async function brevoRequest(path, body) {
   return data;
 }
 
-if (brevoKey) {
+if (useGmail) {
+  console.log(`[Mailer] Using Gmail API, from ${/@gmail\.com>?\s*$/i.test(config.from) ? config.from : DEFAULT_FROM}`);
+} else if (brevoKey) {
   console.log(`[Mailer] Using Brevo HTTP API, from ${config.from}`);
 } else if (config.missing.length) {
   console.error(`[Mailer] SMTP is not configured — missing ${config.missing.join(', ')}. OTP emails will fail until these are set in the environment.`);
@@ -110,6 +159,19 @@ function describeError(error) {
 }
 
 async function sendMail({ to, subject, html, text }) {
+  if (useGmail) {
+    try {
+      // Gmail only sends as the authorized account, so a non-Gmail SMTP_FROM
+      // (e.g. a Brevo sender) falls back to the Gmail default.
+      const from = /@gmail\.com>?\s*$/i.test(config.from) ? config.from : DEFAULT_FROM;
+      const data = await gmailSend({ from, to, subject, html, text });
+      console.log(`[Mailer] Sent "${subject}" to ${to} via Gmail API (${data.id})`);
+      return { success: true };
+    } catch (error) {
+      console.error(`[Mailer] Gmail API failed to send "${subject}" to ${to}: ${describeError(error)}`);
+      return { success: false, error: describeError(error) };
+    }
+  }
   if (brevoKey) {
     try {
       const data = await brevoRequest('/smtp/email', { sender: parseFrom(config.from), to: [{ email: to }], subject, htmlContent: html, textContent: text });
@@ -190,7 +252,13 @@ async function sendPasswordResetEmail(toEmail, resetCode) {
 // imports it). Verifies connect + STARTTLS/TLS + login, and if a recipient is
 // given also sends a real test email through the same path as OTP emails.
 async function testSmtp(toEmail) {
-  if (brevoKey) {
+  if (useGmail) {
+    try {
+      await gmailAccessToken();
+    } catch (error) {
+      return { success: false, error: `Gmail API credentials rejected — ${describeError(error)}` };
+    }
+  } else if (brevoKey) {
     try {
       await brevoRequest('/account');
     } catch (error) {
@@ -199,7 +267,7 @@ async function testSmtp(toEmail) {
   } else if (!transporter) {
     return { success: false, error: `SMTP is not configured. Set ${config.missing.join(', ')} in the Render environment variables.` };
   }
-  if (!brevoKey) {
+  if (!brevoKey && !useGmail) {
     try {
       await transporter.verify();
     } catch (error) {
@@ -207,7 +275,7 @@ async function testSmtp(toEmail) {
     }
   }
   if (!toEmail) {
-    return { success: true, message: brevoKey ? 'Brevo API key is valid.' : `Connected and authenticated to ${config.host}:${config.port}.` };
+    return { success: true, message: useGmail ? 'Gmail API credentials are valid.' : brevoKey ? 'Brevo API key is valid.' : `Connected and authenticated to ${config.host}:${config.port}.` };
   }
   const result = await sendMail({
     to: toEmail,

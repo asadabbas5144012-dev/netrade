@@ -30,6 +30,13 @@ services:
       - key: APP_DOMAIN
         sync: false
       # OTP / password-reset email (server-only - set in the Render dashboard).
+      # Gmail API (preferred for a @gmail.com sender; used when all three are set).
+      - key: GMAIL_CLIENT_ID
+        sync: false
+      - key: GMAIL_CLIENT_SECRET
+        sync: false
+      - key: GMAIL_REFRESH_TOKEN
+        sync: false
       # Recommended on Render: Brevo HTTP API (port 443, never blocked).
       # Verify netradeofficiall@gmail.com as a sender in Brevo first.
       - key: BREVO_API_KEY
