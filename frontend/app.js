@@ -1143,7 +1143,7 @@ async function showCaptchaModal() {
             return;
         }
         if (data.error) { showToast(data.error); btn.disabled = false; return; }
-        showToast('Verification code sent successfully!');
+        showToast('Code sent! Check your Inbox — and the Spam folder if you don\'t see it.');
     } catch (e) { showToast('Failed to send code: ' + e.message); btn.disabled = false; return; }
     let seconds = 60;
     btn.textContent = seconds + 's';
