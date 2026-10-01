@@ -213,6 +213,11 @@ function describeError(error) {
   return [error.code, error.message].filter(Boolean).join(': ');
 }
 
+// Subjects carry the one-time code; keep it out of the server logs.
+function logSubject(subject) {
+  return subject.replace(/^\S+ is your /, '<code> is your ');
+}
+
 async function sendMail({ to, subject, html, text }) {
   if (useGmail) {
     try {
@@ -220,97 +225,86 @@ async function sendMail({ to, subject, html, text }) {
       // (e.g. a Brevo sender) falls back to the Gmail default.
       const from = /@gmail\.com>?\s*$/i.test(config.from) ? config.from : DEFAULT_FROM;
       const data = await gmailSend({ from, to, subject, html, text });
-      console.log(`[Mailer] Sent "${subject}" to ${to} via Gmail API (${data.id})`);
+      console.log(`[Mailer] Sent "${logSubject(subject)}" to ${to} via Gmail API (${data.id})`);
       return { success: true };
     } catch (error) {
-      console.error(`[Mailer] Gmail API failed to send "${subject}" to ${to}: ${describeError(error)}`);
+      console.error(`[Mailer] Gmail API failed to send "${logSubject(subject)}" to ${to}: ${describeError(error)}`);
       return { success: false, error: describeError(error) };
     }
   }
   if (useWebhook) {
     try {
       await webhookSend({ to, subject, html, text, name: parseFrom(config.from).name || 'NEOTRADE' });
-      console.log(`[Mailer] Sent "${subject}" to ${to} via Apps Script`);
+      console.log(`[Mailer] Sent "${logSubject(subject)}" to ${to} via Apps Script`);
       return { success: true };
     } catch (error) {
-      console.error(`[Mailer] Apps Script failed to send "${subject}" to ${to}: ${describeError(error)}`);
+      console.error(`[Mailer] Apps Script failed to send "${logSubject(subject)}" to ${to}: ${describeError(error)}`);
       return { success: false, error: describeError(error) };
     }
   }
   if (brevoKey) {
     try {
       const data = await brevoRequest('/smtp/email', { sender: parseFrom(config.from), to: [{ email: to }], subject, htmlContent: html, textContent: text });
-      console.log(`[Mailer] Sent "${subject}" to ${to} via Brevo (${data.messageId})`);
+      console.log(`[Mailer] Sent "${logSubject(subject)}" to ${to} via Brevo (${data.messageId})`);
       if (data.messageId) logBrevoDelivery(data.messageId, to);
       return { success: true };
     } catch (error) {
-      console.error(`[Mailer] Brevo failed to send "${subject}" to ${to}: ${describeError(error)}`);
+      console.error(`[Mailer] Brevo failed to send "${logSubject(subject)}" to ${to}: ${describeError(error)}`);
       return { success: false, error: describeError(error) };
     }
   }
   if (!transporter) {
     const error = `SMTP is not configured (missing ${config.missing.join(', ')})`;
-    console.error(`[Mailer] Not sending "${subject}" to ${to}: ${error}`);
+    console.error(`[Mailer] Not sending "${logSubject(subject)}" to ${to}: ${error}`);
     return { success: false, error };
   }
   try {
     const info = await transporter.sendMail({ from: config.from, to, subject, html, text });
-    console.log(`[Mailer] Sent "${subject}" to ${to} (${info.messageId})`);
+    console.log(`[Mailer] Sent "${logSubject(subject)}" to ${to} (${info.messageId})`);
     return { success: true };
   } catch (error) {
-    console.error(`[Mailer] Failed to send "${subject}" to ${to}: ${describeError(error)}`);
+    console.error(`[Mailer] Failed to send "${logSubject(subject)}" to ${to}: ${describeError(error)}`);
     return { success: false, error: describeError(error) };
   }
 }
 
-function layout(title, bodyHtml) {
-  return `
-    <div style="background-color: #0b0e14; padding: 24px 12px; font-family: Arial, sans-serif;">
-      <div style="max-width: 560px; margin: 0 auto; background-color: #141821; border: 1px solid #2a2f3a; border-radius: 12px; padding: 28px 24px;">
-        <div style="text-align: center; font-size: 22px; font-weight: bold; letter-spacing: 2px; color: #f1d98a; margin-bottom: 6px;">NEOTRADE</div>
-        <h2 style="color: #ffffff; text-align: center; font-size: 18px; margin: 0 0 20px;">${title}</h2>
-        ${bodyHtml}
-        <hr style="border: none; border-top: 1px solid #2a2f3a; margin: 24px 0 16px;" />
-        <p style="color: #8b93a7; font-size: 12px; text-align: center; margin: 0;">&copy; ${new Date().getFullYear()} NEOTRADE. All rights reserved.</p>
-      </div>
-    </div>
-  `;
+// Deliberately plain: a fresh sender's heavily styled, dark, image-like email
+// looks like phishing to Gmail's filters, while short, simple messages (the
+// way big services send codes) are far more likely to reach the inbox.
+function layout(bodyHtml) {
+  return `<div style="font-family: Arial, Helvetica, sans-serif; font-size: 15px; line-height: 1.6; color: #222; max-width: 520px;">
+${bodyHtml}
+<p style="color: #777; font-size: 13px; margin-top: 24px;">— NEOTRADE team</p>
+</div>`;
 }
 
-function codeBlock(code) {
-  return `
-      <div style="background-color: #0b0e14; border: 1px solid #3a3320; padding: 16px; border-radius: 8px; text-align: center; margin: 20px 0;">
-        <span style="font-size: 26px; font-weight: bold; letter-spacing: 6px; color: #f1d98a;">${code}</span>
-      </div>`;
-}
-
-const P = 'color: #c9cfdb; font-size: 15px; line-height: 1.6;';
+const P = 'margin: 0 0 12px;';
 
 async function sendOtpEmail(toEmail, otpCode) {
   return sendMail({
     to: toEmail,
-    subject: 'Your NEOTRADE Verification Code',
-    text: `Your NEOTRADE verification code is ${otpCode}. It expires in 10 minutes. If you did not request this, please ignore this email.`,
-    html: layout('Verification Code', `
-      <p style="${P}">Hello,</p>
-      <p style="${P}">Use the following code to verify your email and complete your NEOTRADE sign-up. This code expires in 10 minutes.</p>
-      ${codeBlock(otpCode)}
-      <p style="color: #8b93a7; font-size: 13px;">If you did not request this, please ignore this email.</p>
-    `)
+    subject: `${otpCode} is your NEOTRADE verification code`,
+    text: `Hi,\n\nYour NEOTRADE verification code is: ${otpCode}\n\nEnter this code in the app to finish creating your account. It expires in 10 minutes.\n\nIf you didn't request this, you can ignore this email.\n\n— NEOTRADE team`,
+    html: layout(`
+<p style="${P}">Hi,</p>
+<p style="${P}">Your NEOTRADE verification code is:</p>
+<p style="margin: 0 0 12px; font-size: 24px; font-weight: bold; letter-spacing: 3px;">${otpCode}</p>
+<p style="${P}">Enter this code in the app to finish creating your account. It expires in 10 minutes.</p>
+<p style="${P}">If you didn't request this, you can ignore this email.</p>`)
   });
 }
 
 async function sendPasswordResetEmail(toEmail, resetCode) {
   return sendMail({
     to: toEmail,
-    subject: 'Reset your NEOTRADE password',
-    text: `Your NEOTRADE password reset code is ${resetCode}. It expires in 30 minutes. If you did not request a password reset, ignore this email — your password will not change.`,
-    html: layout('Password Reset', `
-      <p style="${P}">Hello,</p>
-      <p style="${P}">We received a request to reset your NEOTRADE password. Enter this code in the app to choose a new password. It expires in 30 minutes.</p>
-      ${codeBlock(resetCode)}
-      <p style="color: #8b93a7; font-size: 13px;">If you did not request a password reset, ignore this email — your password will not change.</p>
-    `)
+    subject: `${resetCode} is your NEOTRADE password reset code`,
+    text: `Hi,\n\nYour NEOTRADE password reset code is: ${resetCode}\n\nEnter this code in the app to choose a new password. It expires in 30 minutes.\n\nIf you didn't request a password reset, ignore this email — your password will not change.\n\n— NEOTRADE team`,
+    html: layout(`
+<p style="${P}">Hi,</p>
+<p style="${P}">Your NEOTRADE password reset code is:</p>
+<p style="margin: 0 0 12px; font-size: 24px; font-weight: bold; letter-spacing: 3px;">${resetCode}</p>
+<p style="${P}">Enter this code in the app to choose a new password. It expires in 30 minutes.</p>
+<p style="${P}">If you didn't request a password reset, ignore this email — your password will not change.</p>`)
   });
 }
 
@@ -354,7 +348,7 @@ async function testSmtp(toEmail) {
     to: toEmail,
     subject: 'NEOTRADE SMTP test',
     text: 'This is a test email from the NEOTRADE admin panel. SMTP is working.',
-    html: layout('SMTP Test', `<p style="${P}">This is a test email from the NEOTRADE admin panel. SMTP is working.</p>`)
+    html: layout(`<p style="${P}">This is a test email from the NEOTRADE admin panel. Email sending is working.</p>`)
   });
   return result.success
     ? { success: true, message: `Test email sent to ${toEmail} from ${config.from}.` }
