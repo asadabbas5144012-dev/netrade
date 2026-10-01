@@ -1120,7 +1120,7 @@ function closeCaptcha() {
 
 async function showCaptchaModal() {
     const email = document.getElementById('reg-email')?.value?.trim();
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    if (!email || !/^[^\s@]+@[^\s@.]+(\.[^\s@.]+)*\.[a-z]{2,}$/i.test(email)) {
         showToast('Please enter a valid email first');
         return;
     }
