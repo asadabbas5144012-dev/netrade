@@ -2284,32 +2284,15 @@ async function doWithdrawal() {
     if (!amount || amount <= 0) { showToast('Please enter a valid amount'); return; }
     if (userData && amount > userData.balance) { showToast('Insufficient balance'); return; }
 
-    // 2FA gate: if the account has Google Authenticator enabled, require a
-    // fresh code before submitting; if not set up yet, send them to set it
-    // up instead of letting the withdrawal go through unprotected.
-    let twoFaEnabled = false;
-    try {
-        const statusRes = await fetch('/api/auth/2fa/status', { headers: { 'Authorization': `Bearer ${authToken}` } });
-        const statusData = await statusRes.json();
-        twoFaEnabled = !!statusData.enabled;
-    } catch (e) { /* if the status check itself fails, fall through treating 2FA as not enabled */ }
-
-    if (!twoFaEnabled) {
-        showConfirmSetup2fa();
-        return;
-    }
-
-    show2faCodePrompt(async (code) => {
-        await submitWithdrawal(amount, code);
-    });
+    await submitWithdrawal(amount);
 }
 
-async function submitWithdrawal(amount, code) {
+async function submitWithdrawal(amount) {
     try {
         const res = await fetch('/api/wallet/withdraw', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
-            body: JSON.stringify({ amount, code })
+            body: JSON.stringify({ amount })
         });
         const data = await res.json();
         if (!res.ok) { showToast(data.error || 'Withdrawal failed'); return; }
@@ -2317,70 +2300,6 @@ async function submitWithdrawal(amount, code) {
         document.getElementById('withdrawal-amount').value = '';
         refreshUserData();
     } catch (err) { showToast('Withdrawal failed'); }
-}
-
-function showConfirmSetup2fa() {
-    let modal = document.getElementById('setup-2fa-popup');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = 'setup-2fa-popup';
-        modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:24px;';
-        modal.innerHTML = `
-        <div style="background:#11100e;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
-            <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
-                <i class="fa-solid fa-shield-halved" style="color:#fff;font-size:20px;"></i>
-            </div>
-            <div style="font-size:15px;font-weight:700;color:#f5f1e8;margin-bottom:10px;">Set Up Google Authenticator</div>
-            <div style="font-size:13px;color:#6b7280;line-height:1.6;margin-bottom:20px;">For your security, withdrawals require Google Authenticator. Set it up first, then try again.</div>
-            <button onclick="closeConfirmSetup2fa(); navTo('google-auth-screen');" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;margin-bottom:10px;">Set Up Now</button>
-            <button onclick="closeConfirmSetup2fa()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#1a1814;color:#6b7280;">Cancel</button>
-        </div>`;
-        document.body.appendChild(modal);
-    }
-    modal.style.display = 'flex';
-}
-function closeConfirmSetup2fa() {
-    const modal = document.getElementById('setup-2fa-popup');
-    if (modal) modal.style.display = 'none';
-}
-
-function show2faCodePrompt(onSubmit) {
-    let modal = document.getElementById('2fa-code-popup');
-    if (!modal) {
-        modal = document.createElement('div');
-        modal.id = '2fa-code-popup';
-        modal.style.cssText = 'display:flex;position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.55);align-items:center;justify-content:center;padding:24px;';
-        modal.innerHTML = `
-        <div style="background:#11100e;border-radius:18px;max-width:340px;width:100%;padding:24px 20px;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
-            <div style="width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,#4c1d95,#8b5cf6);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
-                <i class="fa-solid fa-shield-halved" style="color:#fff;font-size:20px;"></i>
-            </div>
-            <div style="font-size:15px;font-weight:700;color:#f5f1e8;margin-bottom:14px;">Enter Authenticator Code</div>
-            <input type="text" id="2fa-code-input" inputmode="numeric" maxlength="6" placeholder="000000" style="width:100%;padding:13px;border:1.5px solid rgba(139,92,246,0.25);border-radius:12px;font-size:20px;font-weight:700;text-align:center;letter-spacing:6px;margin-bottom:16px;outline:none;">
-            <button id="2fa-code-submit-btn" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;background:linear-gradient(135deg,#4c1d95,#8b5cf6);color:#fff;margin-bottom:10px;">Confirm</button>
-            <button onclick="close2faCodePrompt()" style="width:100%;padding:13px;border:none;border-radius:12px;font-size:14px;font-weight:600;cursor:pointer;background:#1a1814;color:#6b7280;">Cancel</button>
-        </div>`;
-        document.body.appendChild(modal);
-    }
-    const input = document.getElementById('2fa-code-input');
-    const btn = document.getElementById('2fa-code-submit-btn');
-    input.value = '';
-    btn.onclick = async () => {
-        const code = input.value.trim();
-        if (!code || code.length !== 6) { showToast('Enter the 6-digit code'); return; }
-        btn.textContent = 'Verifying...';
-        btn.style.pointerEvents = 'none';
-        close2faCodePrompt();
-        await onSubmit(code);
-        btn.textContent = 'Confirm';
-        btn.style.pointerEvents = 'auto';
-    };
-    modal.style.display = 'flex';
-    input.focus();
-}
-function close2faCodePrompt() {
-    const modal = document.getElementById('2fa-code-popup');
-    if (modal) modal.style.display = 'none';
 }
 
 function doLogout() {

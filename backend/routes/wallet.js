@@ -1,7 +1,6 @@
 const express = require('express');
 const prisma = require('../prismaClient');
 const QRCode = require('qrcode');
-const speakeasy = require('speakeasy');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth');
 const { getDepositAddress, DEPOSIT_NETWORK } = require('../config/depositAddress');
@@ -111,7 +110,7 @@ router.get('/withdrawals', authMiddleware, async (req, res) => {
 // ── TRX WITHDRAWAL REQUEST ──
 router.post('/withdraw', authMiddleware, async (req, res) => {
   try {
-    const { amount, code } = req.body;
+    const { amount } = req.body;
     const amt = parseFloat(amount);
     if (isNaN(amt) || amt <= 0) return res.status(400).json({ error: 'Invalid amount' });
 
@@ -119,15 +118,6 @@ router.post('/withdraw', authMiddleware, async (req, res) => {
     if (!user) return res.status(404).json({ error: 'User not found' });
     if (user.suspended) return res.status(403).json({ error: 'Account suspended: ' + (user.suspendedReason || 'Contact support') });
     if (!user.boundAddress) return res.status(400).json({ error: 'Please bind a withdrawal address first' });
-
-    // Enforced server-side, not just gated in the UI — a user with 2FA
-    // enabled must prove it with every withdrawal, not just get prompted
-    // client-side (which could be bypassed by calling this endpoint directly).
-    if (user.twoFaEnabled) {
-      if (!code) return res.status(400).json({ error: '2FA code required', requires2fa: true });
-      const valid = speakeasy.totp.verify({ secret: user.otpSecret, encoding: 'base32', token: String(code), window: 2 });
-      if (!valid) return res.status(400).json({ error: 'Invalid 2FA code' });
-    }
 
     if (user.withdrawFreezeUntil && new Date() < new Date(user.withdrawFreezeUntil)) {
       const remaining = Math.ceil((new Date(user.withdrawFreezeUntil) - new Date()) / 3600000);
